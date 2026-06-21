@@ -1,17 +1,97 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
+import * as cheerio from 'cheerio'
 import type { Competition } from '../src/lib/types'
 
-// Self-contained (see note in api/jobs/search.ts): Vercel runs each function in
-// isolation, so shared local modules must NOT be imported at runtime. The small
-// scraper framework lives inline here.
+// Self-contained (Vercel runs each function in isolation). Scraping happens ONLY
+// here, server-side. Sources are isolated: one broken site can't sink the others.
 
-/** One source. `fetch` returns its parsed items (or throws — caught per-source). */
-type ScrapeAdapter<T> = {
-  source: string
-  fetch: () => Promise<T[]>
+type ScrapeAdapter<T> = { source: string; fetch: () => Promise<T[]> }
+
+const UA = 'Mozilla/5.0 (compatible; career-strategy-planner/1.0; +workbench)'
+
+// Tag derivation from architecture keywords (drives filtering + relevance display).
+const TAG_KEYWORDS: [string, string[]][] = [
+  ['Sustainability', ['sustainab', 'passive', 'esd', 'carbon', 'climate', 'net zero', 'green']],
+  ['Housing', ['housing', 'residential', 'affordable', 'dwelling', 'apartment']],
+  ['Urban Design', ['urban', 'public space', 'masterplan', 'placemaking', 'city', 'streetscape']],
+  ['Adaptive Reuse', ['adaptive reuse', 'heritage', 'renovation', 'retrofit', 'restoration']],
+  ['Timber / Material', ['timber', 'mass timber', 'clt', 'brick', 'concrete', 'material']],
+  ['Landscape', ['landscape', 'garden', 'park']],
+  ['Interior', ['interior', 'furniture', 'fitout']],
+  ['Computational', ['parametric', 'computational', 'fabrication', 'digital', 'algorithm']],
+  ['Community / Social', ['community', 'social', 'public', 'civic']],
+  ['Pavilion / Installation', ['pavilion', 'installation', 'folly', 'temporary']],
+  ['Students', ['student', 'graduate', 'university', 'young']],
+  ['Memorial / Cultural', ['memorial', 'museum', 'cultural', 'monument', 'gallery']],
+]
+
+function deriveTags(text: string): string[] {
+  const t = text.toLowerCase()
+  return TAG_KEYWORDS.filter(([, kws]) => kws.some((k) => t.includes(k))).map(([tag]) => tag)
 }
 
-/** Run every adapter, isolating failures so one broken source can't sink the rest. */
+function parseDeadline(text?: string): string | undefined {
+  if (!text) return undefined
+  const cleaned = text.replace(/(\d+)(st|nd|rd|th)/gi, '$1').trim()
+  const t = Date.parse(cleaned)
+  return Number.isNaN(t) ? undefined : new Date(t).toISOString()
+}
+
+// --- Adapter 1: competitions.archi (WordPress listing) ---
+const competitionsArchi: ScrapeAdapter<Competition> = {
+  source: 'competitions.archi',
+  fetch: async () => {
+    const res = await fetch('https://competitions.archi/cat/all-competitions/', {
+      headers: { 'User-Agent': UA },
+    })
+    if (!res.ok) throw new Error(`competitions.archi ${res.status}`)
+    const $ = cheerio.load(await res.text())
+    return $('.competition-item')
+      .toArray()
+      .map((el): Competition | null => {
+        const $el = $(el)
+        const url = $el.find('a').first().attr('href') ?? ''
+        const title = $el.find('h2.title').text().trim()
+        if (!title || !url) return null
+        const submission = $el.find('.submission').text().replace(/submission:?/i, '').trim()
+        return {
+          id: url,
+          title,
+          deadline: parseDeadline(submission),
+          tags: deriveTags(title),
+          url,
+          source: 'competitions.archi',
+        }
+      })
+      .filter((x): x is Competition => x !== null)
+  },
+}
+
+// --- Adapter 2: ArchDaily competitions search ---
+const archDaily: ScrapeAdapter<Competition> = {
+  source: 'archdaily',
+  fetch: async () => {
+    const res = await fetch('https://www.archdaily.com/search/competitions', {
+      headers: { 'User-Agent': UA },
+    })
+    if (!res.ok) throw new Error(`archdaily ${res.status}`)
+    const $ = cheerio.load(await res.text())
+    return $('.afd-search-list__item')
+      .toArray()
+      .map((el): Competition | null => {
+        const $el = $(el)
+        const href = $el.find('a.afd-search-list__link').attr('href') ?? ''
+        const title = $el.find('.afd-search-list__title').text().trim()
+        if (!title || !href) return null
+        const url = new URL(href, 'https://www.archdaily.com').href
+        return { id: url, title, tags: deriveTags(title), url, source: 'archdaily' }
+      })
+      .filter((x): x is Competition => x !== null)
+  },
+}
+
+const ADAPTERS: ScrapeAdapter<Competition>[] = [competitionsArchi, archDaily]
+
 async function runAdapters<T>(adapters: ScrapeAdapter<T>[]): Promise<{ items: T[]; sources: string[] }> {
   const settled = await Promise.allSettled(adapters.map((a) => a.fetch()))
   const items: T[] = []
@@ -25,52 +105,23 @@ async function runAdapters<T>(adapters: ScrapeAdapter<T>[]): Promise<{ items: T[
   return { items, sources }
 }
 
-// ---------------------------------------------------------------------------
-// Competition source adapters.
-//
-// PENDING: add 2–3 real listing pages here (terms/robots.txt checked first).
-// `cheerio` is installed — import it INSIDE this file and write an adapter:
-//
-//   import * as cheerio from 'cheerio'
-//
-//   const exampleBoard: ScrapeAdapter<Competition> = {
-//     source: 'example-board',
-//     fetch: async () => {
-//       const res = await fetch('https://example.com/competitions', {
-//         headers: { 'User-Agent': 'career-strategy-planner/1.0' },
-//       })
-//       if (!res.ok) throw new Error(`example-board ${res.status}`)
-//       const $ = cheerio.load(await res.text())
-//       return $('.listing-card').toArray().map((el): Competition => {
-//         const title = $(el).find('.title').text().trim()
-//         const url = new URL($(el).find('a').attr('href') ?? '', 'https://example.com').href
-//         return {
-//           id: url,
-//           title,
-//           organiser: $(el).find('.organiser').text().trim() || undefined,
-//           deadline: undefined, // parse to ISO if present
-//           location: $(el).find('.location').text().trim() || undefined,
-//           tags: [], // derive from title/summary keywords
-//           url,
-//           source: 'example-board',
-//         }
-//       })
-//     },
-//   }
-// ---------------------------------------------------------------------------
-
-const ADAPTERS: ScrapeAdapter<Competition>[] = [
-  // exampleBoard,
-]
+// Per-cold-start cache so repeated views don't re-hit the sources.
+let cache: { at: number; payload: unknown } | null = null
+const TTL = 30 * 60 * 1000
 
 // GET /api/competitions
 export default async function handler(_req: VercelRequest, res: VercelResponse) {
-  if (ADAPTERS.length === 0) {
-    return res.status(200).json({ competitions: [], sources: [], configured: false })
+  if (cache && Date.now() - cache.at < TTL) {
+    return res.status(200).json(cache.payload)
   }
   try {
     const { items, sources } = await runAdapters(ADAPTERS)
-    return res.status(200).json({ competitions: items, sources, configured: true })
+    // De-dupe by url, keep deterministic order.
+    const seen = new Set<string>()
+    const competitions = items.filter((c) => (seen.has(c.url) ? false : seen.add(c.url)))
+    const payload = { competitions, sources, configured: true }
+    cache = { at: Date.now(), payload }
+    return res.status(200).json(payload)
   } catch {
     return res
       .status(502)
