@@ -1,50 +1,37 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import type { Scholarship } from '../src/lib/types'
-import { runAdapters, withCache } from './_lib/scrape'
+
+// Self-contained (see note in api/jobs/search.ts): no runtime imports from api/_lib.
+
+type ScrapeAdapter<T> = {
+  source: string
+  fetch: () => Promise<T[]>
+}
+
+async function runAdapters<T>(adapters: ScrapeAdapter<T>[]): Promise<{ items: T[]; sources: string[] }> {
+  const settled = await Promise.allSettled(adapters.map((a) => a.fetch()))
+  const items: T[] = []
+  const sources: string[] = []
+  settled.forEach((res, i) => {
+    if (res.status === 'fulfilled') {
+      items.push(...res.value)
+      sources.push(adapters[i].source)
+    }
+  })
+  return { items, sources }
+}
 
 // ---------------------------------------------------------------------------
-// Scholarship source adapters — same pluggable pattern as competitions.
+// Scholarship source adapters — same pattern as competitions.
 //
 // PENDING: add 2–3 real listing pages here (terms/robots.txt checked first).
-//
-// Template:
-//
-//   import * as cheerio from 'cheerio'
-//   import { deriveTags, parseDeadline } from './_lib/scrape'
-//
-//   const exampleFund: ScrapeAdapter<Scholarship> = {
-//     source: 'example-fund',
-//     fetch: async () => {
-//       const res = await fetch('https://example.com/scholarships', {
-//         headers: { 'User-Agent': 'career-strategy-planner/1.0' },
-//       })
-//       if (!res.ok) throw new Error(`example-fund ${res.status}`)
-//       const $ = cheerio.load(await res.text())
-//       return $('.scholarship').toArray().map((el): Scholarship => {
-//         const title = $(el).find('.title').text().trim()
-//         const url = new URL($(el).find('a').attr('href') ?? '', 'https://example.com').href
-//         const summary = $(el).find('.summary').text().trim()
-//         return {
-//           id: url,
-//           title,
-//           provider: $(el).find('.provider').text().trim() || undefined,
-//           amount: $(el).find('.amount').text().trim() || undefined,
-//           deadline: parseDeadline($(el).find('.deadline').text().trim()),
-//           eligibility: $(el).find('.eligibility').text().trim() || undefined,
-//           tags: deriveTags(`${title} ${summary}`),
-//           url,
-//           source: 'example-fund',
-//         }
-//       })
-//     },
-//   }
+// Import `cheerio` inside this file and push adapters into ADAPTERS. See
+// api/competitions.ts for a worked example.
 // ---------------------------------------------------------------------------
 
-const ADAPTERS: import('./_lib/scrape').ScrapeAdapter<Scholarship>[] = [
+const ADAPTERS: ScrapeAdapter<Scholarship>[] = [
   // exampleFund,
 ]
-
-const TTL = 30 * 60 * 1000 // 30 min
 
 // GET /api/scholarships
 export default async function handler(_req: VercelRequest, res: VercelResponse) {
@@ -52,7 +39,7 @@ export default async function handler(_req: VercelRequest, res: VercelResponse) 
     return res.status(200).json({ scholarships: [], sources: [], configured: false })
   }
   try {
-    const { items, sources } = await withCache('scholarships', TTL, () => runAdapters(ADAPTERS))
+    const { items, sources } = await runAdapters(ADAPTERS)
     return res.status(200).json({ scholarships: items, sources, configured: true })
   } catch {
     return res
