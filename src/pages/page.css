@@ -1,0 +1,131 @@
+/* Shared page scaffolding. */
+
+.page-head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
+}
+.page-head__eyebrow {
+  display: flex;
+}
+.page-head__lead {
+  max-width: 60ch;
+}
+
+/* Foreman-voice empty / loading / error blocks. */
+.note {
+  border: var(--rule-thin) solid var(--line);
+  border-left: 3px solid var(--ink);
+  background: var(--bg-card);
+  padding: var(--space-4) var(--space-5);
+  max-width: 60ch;
+}
+.note--error {
+  border-left-color: var(--accent-rust);
+}
+.note__title {
+  font-family: var(--font-display);
+  font-size: var(--fs-label);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: var(--track-label);
+  color: var(--ink);
+  margin-bottom: var(--space-1);
+}
+.note__body {
+  font-size: var(--fs-body-sm);
+  color: var(--ink-muted);
+}
+
+/* ---------- Bench landing ---------- */
+.bench-hero {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-6) 0 var(--space-7);
+  max-width: 70ch;
+}
+.bench-hero__eyebrow {
+  display: flex;
+}
+.bench-hero__title {
+  font-size: clamp(32px, 5vw, 48px);
+}
+.bench-hero__lead {
+  font-size: var(--fs-body);
+  max-width: 56ch;
+}
+.bench-hero__cta {
+  display: flex;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.bench-strapline {
+  font-family: var(--font-display);
+  font-size: var(--fs-eyebrow);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: var(--track-eyebrow);
+  color: var(--ink-muted);
+  margin: var(--space-5) 0 var(--space-2);
+}
+
+/* MY BENCH tray */
+.mybench-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+}
+.mybench-card {
+  position: relative;
+  border: var(--rule-thin) solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--bg-card);
+  padding: var(--space-3);
+}
+.mybench-card__kind {
+  font-family: var(--font-display);
+  font-size: var(--fs-badge);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--accent-rust);
+  margin-bottom: 4px;
+}
+.mybench-card__title {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+  line-height: 1.15;
+  padding-right: var(--space-4);
+}
+.mybench-card__title a {
+  color: var(--ink);
+}
+.mybench-card__title a:hover {
+  color: var(--accent-rust);
+}
+.mybench-card__sub {
+  font-size: var(--fs-body-sm);
+  color: var(--ink-muted);
+  margin-top: 4px;
+}
+.mybench-card__remove {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
+  background: none;
+  border: none;
+  color: var(--ink-muted);
+  display: inline-flex;
+  padding: 2px;
+}
+.mybench-card__remove:hover {
+  color: var(--accent-rust);
+}

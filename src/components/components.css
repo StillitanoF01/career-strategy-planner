@@ -1,0 +1,225 @@
+/* Reusable Workshop Bench components. Flat, sharp, hairline-structured. */
+
+/* ---------- Button ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-family: var(--font-display);
+  font-size: var(--fs-label);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 11px 22px;
+  border-radius: var(--radius);
+  border: none;
+  transition: background-color 120ms ease, color 120ms ease;
+  user-select: none;
+}
+.btn:active {
+  transform: scale(0.98);
+}
+.btn--primary {
+  background: var(--accent-rust);
+  color: var(--accent-rust-bg);
+}
+.btn--primary:hover {
+  background: #9f4527;
+}
+.btn--secondary {
+  background: transparent;
+  color: var(--ink);
+  border: 2px solid var(--ink);
+  padding: 9px 20px; /* compensate for border so heights match primary */
+}
+.btn--secondary:hover {
+  background: var(--ink);
+  color: var(--bg-base);
+}
+.btn[disabled] {
+  opacity: 0.45;
+  pointer-events: none;
+}
+.btn__arrow {
+  font-size: 1.05em;
+  line-height: 1;
+}
+
+/* ---------- Status badge ---------- */
+.status-badge {
+  display: inline-block;
+  background: var(--accent-rust);
+  color: var(--accent-rust-bg);
+  font-family: var(--font-display);
+  font-size: var(--fs-badge);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+}
+
+/* ---------- Eyebrow tag (stamped label) ---------- */
+.eyebrow-tag {
+  display: inline-block;
+  background: var(--ink);
+  color: var(--bg-base);
+  font-family: var(--font-display);
+  font-size: var(--fs-eyebrow);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: var(--track-eyebrow);
+  padding: 4px 8px;
+  border-radius: 0; /* sharp — stamped onto material */
+}
+
+/* ---------- Pegboard strip ---------- */
+.pegboard {
+  border-top: var(--rule-bold) solid var(--ink);
+  border-left: var(--rule-thin) solid var(--line);
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+}
+.pegboard__cell {
+  position: relative;
+  background: var(--bg-card);
+  border-right: var(--rule-thin) solid var(--line);
+  border-bottom: var(--rule-thin) solid var(--line);
+  min-height: 84px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-muted);
+  transition: color 120ms ease;
+}
+.pegboard__cell:hover {
+  color: var(--ink); /* single deliberate hover — color shift, no scale */
+}
+.pegboard__count {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  font-family: var(--font-display);
+  font-size: var(--fs-eyebrow);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--ink-muted);
+}
+
+/* ---------- Modal ---------- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(44, 42, 36, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  z-index: 1000;
+}
+.modal {
+  background: var(--bg-base);
+  border: var(--rule-bold) solid var(--ink);
+  border-radius: var(--radius-sm);
+  width: 100%;
+  max-width: 460px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: var(--space-5);
+}
+.modal__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  border-bottom: var(--rule-bold) solid var(--ink);
+  padding-bottom: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+.modal__title {
+  font-family: var(--font-display);
+  font-size: var(--fs-h2);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: var(--track-h2);
+}
+.modal__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.modal__form .input,
+.modal__form .select {
+  width: 100%;
+}
+.modal__actions {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: flex-end;
+  margin-top: var(--space-3);
+}
+.radio-row {
+  display: flex;
+  gap: var(--space-4);
+  align-items: center;
+}
+.radio-row label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--fs-body-sm);
+  color: var(--ink-muted);
+}
+
+/* ---------- Pin button ---------- */
+.pin-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  border: var(--rule-thin) solid var(--line);
+  border-radius: var(--radius-sm);
+  color: var(--ink-muted);
+  transition: color 120ms ease, border-color 120ms ease;
+}
+.pin-btn:hover {
+  color: var(--ink);
+  border-color: var(--ink);
+}
+.pin-btn.is-pinned {
+  color: var(--accent-rust);
+  border-color: var(--accent-rust);
+}
+
+/* ---------- Drawer / record card ---------- */
+.drawer-card {
+  background: var(--bg-card);
+  border: var(--rule-thin) solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.drawer-card__label {
+  font-family: var(--font-display);
+  font-size: var(--fs-eyebrow);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: var(--track-eyebrow);
+  color: var(--ink-muted);
+}
+.drawer-card__title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+  line-height: 1.1;
+}
+.drawer-card__body {
+  font-size: var(--fs-body-sm);
+  color: var(--ink-muted);
+}

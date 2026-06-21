@@ -1,0 +1,97 @@
+/* Talks map page. */
+
+.talks-controls {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  align-items: flex-end;
+  margin-bottom: var(--space-4);
+}
+
+.talks-layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: var(--space-5);
+  align-items: start;
+}
+
+.talks-map {
+  height: 520px;
+  border: var(--rule-bold) solid var(--ink);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+.talks-map .leaflet-container {
+  height: 100%;
+  width: 100%;
+  background: var(--bg-panel);
+  font-family: var(--font-body);
+}
+
+/* Pins carry no Leaflet default image — pure SVG. */
+.rust-pin {
+  background: none;
+  border: none;
+}
+
+.talks-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  max-height: 520px;
+  overflow-y: auto;
+}
+.talk-row {
+  border: var(--rule-thin) solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--bg-card);
+  padding: var(--space-3);
+  cursor: pointer;
+  transition: border-color 120ms ease;
+}
+.talk-row:hover,
+.talk-row.is-selected {
+  border-color: var(--accent-rust);
+}
+.talk-row__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+.talk-row__name {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+  line-height: 1.15;
+}
+.talk-row__meta {
+  font-size: var(--fs-body-sm);
+  color: var(--ink-muted);
+  margin-top: 4px;
+}
+.talk-popup__name {
+  font-family: var(--font-display);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+.talk-popup__meta {
+  font-size: 13px;
+  color: var(--ink-muted);
+  margin-bottom: 6px;
+}
+
+@media (max-width: 860px) {
+  .talks-layout {
+    grid-template-columns: 1fr;
+  }
+  .talks-list {
+    max-height: none;
+  }
+}

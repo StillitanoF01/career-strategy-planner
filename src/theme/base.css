@@ -1,0 +1,111 @@
+/* Global element styles. Flat surfaces, no shadows, hairline structure. */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg-base);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Headlines / labels: stamped, stenciled — Oswald, uppercase. */
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  color: var(--ink);
+  margin: 0;
+  font-weight: 600;
+  line-height: var(--lh-tight);
+}
+
+h1 {
+  font-size: var(--fs-h1);
+  letter-spacing: var(--track-h1);
+}
+
+h2 {
+  font-size: var(--fs-h2);
+  font-weight: 500;
+  letter-spacing: var(--track-h2);
+}
+
+p {
+  margin: 0;
+  color: var(--ink-muted);
+}
+
+a {
+  color: var(--ink);
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+/* Focus: visible ink outline (matches the secondary-button language). */
+:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+/* ---- Structural rules ---- */
+.rule-ink {
+  border: none;
+  border-top: var(--rule-bold) solid var(--ink);
+  margin: 0;
+}
+
+.hairline {
+  border: none;
+  border-top: var(--rule-thin) solid var(--line);
+  margin: 0;
+}
+
+/* ---- Layout helpers ---- */
+.container {
+  width: 100%;
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 0 var(--space-5);
+}
+
+.eyebrow {
+  font-family: var(--font-display);
+  font-size: var(--fs-eyebrow);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: var(--track-eyebrow);
+  color: var(--ink-muted);
+}
+
+/* Reusable list reset */
+.bare-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}

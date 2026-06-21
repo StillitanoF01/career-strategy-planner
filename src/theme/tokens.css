@@ -1,0 +1,53 @@
+/* Workshop Bench — design tokens (DESIGN.md is the source of truth).
+   One accent only (rust). Tone-on-tone canvas, ink, muted line work. */
+
+:root {
+  /* ---- Color ---- */
+  --bg-base: #e8e4da;        /* page background — unbleached canvas/linen */
+  --bg-panel: #d8d2be;       /* header bars, nav strips, secondary surfaces */
+  --bg-card: #e8e4da;        /* cards sit flush, separated by rules not shadows */
+  --ink: #2c2a24;            /* primary text, stamped headlines, borders */
+  --ink-muted: #5c5848;      /* body copy, secondary text */
+  --line: #c9c2ac;           /* hairline rules, grid dividers */
+  --accent-rust: #b5512e;    /* single accent — CTA, active-state badge */
+  --accent-rust-bg: #fbe9df; /* text on rust fill */
+
+  /* ---- Type ---- */
+  --font-display: 'Oswald', 'Arial Narrow', system-ui, sans-serif;
+  --font-body: 'Archivo', system-ui, -apple-system, sans-serif;
+
+  --fs-h1: 32px;
+  --fs-h2: 22px;
+  --fs-body: 16px;
+  --fs-body-sm: 15px;
+  --fs-label: 13px;   /* buttons / nav */
+  --fs-eyebrow: 11px;
+  --fs-badge: 10px;
+
+  --lh-tight: 1.05;
+  --lh-body: 1.5;
+
+  /* tracking */
+  --track-h1: 0.02em;
+  --track-h2: 0.04em;
+  --track-label: 0.06em;
+  --track-eyebrow: 0.07em;
+
+  /* ---- Geometry ---- */
+  --radius: 3px;       /* never exceed 3px — sharp corners read as cut material */
+  --radius-sm: 2px;
+  --rule-thin: 1px;    /* minor grid dividers */
+  --rule-bold: 2px;    /* major section boundaries */
+
+  /* ---- Spacing ---- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+
+  --maxw: 1120px;
+}

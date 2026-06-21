@@ -1,0 +1,98 @@
+/* Competitions & Scholarships — ranked opportunity lists. */
+
+.opps-filters {
+  display: flex;
+  gap: var(--space-4);
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: var(--space-4);
+}
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--fs-body-sm);
+  color: var(--ink-muted);
+  cursor: pointer;
+}
+
+.opps-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.opp-card {
+  border: var(--rule-thin) solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--bg-card);
+  padding: var(--space-4);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--space-3);
+  align-items: start;
+}
+.opp-card__title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+  line-height: 1.1;
+}
+.opp-card__sub {
+  font-size: var(--fs-body-sm);
+  color: var(--ink-muted);
+  margin-top: 2px;
+}
+.opp-card__matched {
+  font-size: var(--fs-body-sm);
+  color: var(--ink-muted);
+  margin-top: var(--space-2);
+}
+.opp-card__matched b {
+  color: var(--ink);
+  font-weight: 500;
+}
+.opp-card__right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-2);
+}
+
+.tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: var(--space-2);
+}
+.tag {
+  font-family: var(--font-display);
+  font-size: var(--fs-badge);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink-muted);
+  border: var(--rule-thin) solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 2px 7px;
+}
+
+.deadline-badge {
+  font-family: var(--font-display);
+  font-size: var(--fs-badge);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+}
+.deadline-badge--soon {
+  background: var(--accent-rust);
+  color: var(--accent-rust-bg);
+}
+.deadline-badge--later {
+  border: var(--rule-thin) solid var(--line);
+  color: var(--ink-muted);
+}
