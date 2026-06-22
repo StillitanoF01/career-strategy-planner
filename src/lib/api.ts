@@ -29,11 +29,13 @@ export function fetchJobs(params: {
   country?: string
   page?: number
   what?: string
+  where?: string
 }): Promise<JobsResponse> {
   const q = new URLSearchParams()
   if (params.country) q.set('country', params.country)
   if (params.page) q.set('page', String(params.page))
   if (params.what) q.set('what', params.what)
+  if (params.where) q.set('where', params.where)
   return getJson<JobsResponse>(`/api/jobs/search?${q.toString()}`)
 }
 

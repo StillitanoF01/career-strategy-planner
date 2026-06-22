@@ -4,25 +4,44 @@ import { PageHead } from '../components/PageHead'
 import { Note } from '../components/Note'
 import { DrawerCard } from '../components/DrawerCard'
 import { Button, LinkButton } from '../components/Button'
-import { StatusBadge } from '../components/StatusBadge'
 import { PinButton } from '../components/PinButton'
-import { ApiError, fetchJobs, fetchTopCompanies } from '../lib/api'
-import { COUNTRIES } from '../lib/countries'
-import { useProfile } from '../lib/store'
-import type { Job, TopCompany } from '../lib/types'
+import { ApiError, fetchJobs } from '../lib/api'
+import type { Job } from '../lib/types'
 import { formatSalaryRange, timeAgo } from '../lib/format'
 import './jobs.css'
+
+const AU_STATES = [
+  { label: 'Sydney NSW', where: 'Sydney' },
+  { label: 'Melbourne VIC', where: 'Melbourne' },
+  { label: 'Brisbane QLD', where: 'Brisbane' },
+  { label: 'Perth WA', where: 'Perth' },
+  { label: 'Adelaide SA', where: 'Adelaide' },
+  { label: 'Canberra ACT', where: 'Canberra' },
+  { label: 'Hobart TAS', where: 'Hobart' },
+  { label: 'Darwin NT', where: 'Darwin' },
+]
+
+const ARCH_FIRMS = [
+  { name: 'Hassell', note: 'Major Australian practice' },
+  { name: 'Woods Bagot', note: 'Global design studio' },
+  { name: 'Cox Architecture', note: 'Sydney-based, 60+ years' },
+  { name: 'Architectus', note: 'Urban & civic focus' },
+  { name: 'Fender Katsalidis', note: 'High-rise & mixed-use' },
+  { name: 'Grimshaw', note: 'Transport & cultural' },
+  { name: 'Tzannes', note: 'Award-winning Sydney firm' },
+  { name: 'BVN', note: 'Research-led practice' },
+  { name: 'Lahznimmo', note: 'Public architecture' },
+  { name: 'SJB', note: 'Housing & urban design' },
+]
 
 const PER_PAGE = 20
 
 export function Jobs() {
-  const profile = useProfile()
   const [params] = useSearchParams()
-  // Cross-module wiring: /jobs?what=Revit&country=gb pre-fills the search.
   const initialTerm = params.get('what') ?? 'architecture'
-  const initialCountry = params.get('country') ?? profile?.country ?? 'au'
+  const initialState = AU_STATES[0]
 
-  const [country, setCountry] = useState(initialCountry)
+  const [state, setState] = useState(initialState)
   const [term, setTerm] = useState(initialTerm)
   const [appliedTerm, setAppliedTerm] = useState(initialTerm)
   const [page, setPage] = useState(1)
@@ -32,16 +51,13 @@ export function Jobs() {
   const [status, setStatus] = useState<'loading' | 'ready' | 'empty' | 'error'>('loading')
   const [error, setError] = useState('')
 
-  const [companies, setCompanies] = useState<TopCompany[]>([])
-
-  // Fetch jobs whenever country / page / applied term changes.
+  // Fetch jobs whenever state / page / applied term changes.
   useEffect(() => {
     let live = true
-    // Show the loading skeleton immediately on (re)fetch — intentional.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setStatus('loading')
     setError('')
-    fetchJobs({ country, page, what: appliedTerm })
+    fetchJobs({ country: 'au', page, what: appliedTerm, where: state.where })
       .then((res) => {
         if (!live) return
         setJobs(res.jobs)
@@ -56,20 +72,19 @@ export function Jobs() {
     return () => {
       live = false
     }
-  }, [country, page, appliedTerm])
-
-  // Fetch top companies when country changes.
-  useEffect(() => {
-    let live = true
-    fetchTopCompanies({ country })
-      .then((res) => live && setCompanies(res.companies.slice(0, 10)))
-      .catch(() => live && setCompanies([]))
-    return () => {
-      live = false
-    }
-  }, [country])
+  }, [state, page, appliedTerm])
 
   const totalPages = Math.max(1, Math.ceil(count / PER_PAGE))
+
+  // Build a set of lowercase company names from loaded jobs for hiring detection.
+  const hiringNames = new Set(jobs.map((j) => j.company.toLowerCase()))
+  function isHiring(firmName: string) {
+    const needle = firmName.toLowerCase()
+    for (const name of hiringNames) {
+      if (name.includes(needle) || needle.includes(name)) return true
+    }
+    return false
+  }
 
   function onSearch(e: React.FormEvent) {
     e.preventDefault()
@@ -87,18 +102,19 @@ export function Jobs() {
 
       <form className="jobs-controls" onSubmit={onSearch}>
         <label className="field">
-          <span className="field__label">Country</span>
+          <span className="field__label">State</span>
           <select
             className="select"
-            value={country}
+            value={state.where}
             onChange={(e) => {
-              setCountry(e.target.value)
+              const s = AU_STATES.find((s) => s.where === e.target.value) ?? AU_STATES[0]
+              setState(s)
               setPage(1)
             }}
           >
-            {COUNTRIES.map((c) => (
-              <option key={c.code} value={c.code}>
-                {c.name}
+            {AU_STATES.map((s) => (
+              <option key={s.where} value={s.where}>
+                {s.label}
               </option>
             ))}
           </select>
@@ -121,7 +137,6 @@ export function Jobs() {
         <div>
           <div className="view-head">
             <h2>Openings</h2>
-            {status === 'ready' && <StatusBadge>Open</StatusBadge>}
           </div>
 
           {status === 'loading' && (
@@ -146,7 +161,7 @@ export function Jobs() {
             <>
               <div className="jobs-grid">
                 {jobs.map((job) => (
-                  <JobCard key={job.id} job={job} country={country} />
+                  <JobCard key={job.id} job={job} country="au" />
                 ))}
               </div>
               <div className="pager">
@@ -175,21 +190,20 @@ export function Jobs() {
         <aside>
           <div className="top-companies">
             <div className="top-companies__head">
-              <span className="top-companies__title">Top companies</span>
+              <span className="top-companies__title">Top Architecture Firms</span>
             </div>
-            {companies.length === 0 ? (
-              <div className="top-companies__row" style={{ gridTemplateColumns: '1fr' }}>
-                <span className="top-companies__count">No leaderboard yet.</span>
+            {ARCH_FIRMS.map((f, i) => (
+              <div className="top-companies__row" key={f.name}>
+                <span className="top-companies__rank">{i + 1}</span>
+                <span className="top-companies__name">
+                  {f.name}
+                  {isHiring(f.name) && (
+                    <span className="firm-hiring-badge">Hiring</span>
+                  )}
+                </span>
+                <span className="top-companies__count">{f.note}</span>
               </div>
-            ) : (
-              companies.map((c, i) => (
-                <div className="top-companies__row" key={c.name + i}>
-                  <span className="top-companies__rank">{i + 1}</span>
-                  <span className="top-companies__name">{c.name}</span>
-                  <span className="top-companies__count">{c.vacancies} open</span>
-                </div>
-              ))
-            )}
+            ))}
           </div>
         </aside>
       </div>

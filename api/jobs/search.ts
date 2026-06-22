@@ -66,13 +66,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const country = normalizeCountry(req.query.country)
   const page = Math.max(1, parseInt(String(req.query.page ?? '1'), 10) || 1)
   const what = String(req.query.what ?? 'architecture').trim() || 'architecture'
+  const where = String(req.query.where ?? '').trim()
 
-  const url =
+  let url =
     `${ADZUNA_BASE}/${country}/search/${page}` +
     `?app_id=${encodeURIComponent(appId)}` +
     `&app_key=${encodeURIComponent(appKey)}` +
     `&what=${encodeURIComponent(what)}` +
     `&results_per_page=20&content-type=application/json`
+  if (where) url += `&where=${encodeURIComponent(where)}`
 
   try {
     const r = await fetch(url)
