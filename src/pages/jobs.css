@@ -1,4 +1,369 @@
-/* Jobs page layout. */
+/* ===========================================================================
+   JOBS — photographic stage.
+   jobs-bg.jpg (12800×8534, 3:2) is the background. Content is positioned
+   over the left and right notebook pages using %. cqw scales type with stage.
+   Below the breakpoint the stage hides and the stacked fallback shows.
+=========================================================================== */
+
+.jobs-wrap {
+  background: #1a1714;
+}
+
+.jobs-stage {
+  position: relative;
+  width: 100%;
+  max-width: 1536px;
+  margin: 0 auto;
+  aspect-ratio: 3 / 2;
+  background: url('/jobs-bg.jpg') center / cover no-repeat;
+  container-type: inline-size;
+  overflow: hidden;
+}
+
+.jobs-stage__layer {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---- Left page: header row (text left, pager right) ---- */
+.jobs-stage__head {
+  top: 23%;
+  left: 13%;
+  width: 40%;
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1cqw;
+}
+
+.jobs-stage__head-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.38cqw;
+}
+
+.jobs-stage__eyebrow {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: 0.54cqw;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: #f4ead2;
+  background: #2c2a24;
+  padding: 0.21cqw 0.49cqw;
+  border-radius: 2px;
+  align-self: flex-start;
+}
+
+.jobs-stage__title {
+  font-size: 2.175cqw;
+  line-height: 1.0;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  margin: 0.3cqw 0 0;
+  color: var(--ink);
+}
+
+.jobs-stage__lead {
+  font-size: 0.79cqw;
+  line-height: 1.35;
+  color: var(--ink-muted);
+  margin: 0;
+  max-width: 22cqw;
+}
+
+/* ---- Left page: job cards ---- */
+.jobs-stage__cards {
+  top: 38%;
+  left: 13%;
+  width: 40%;
+  bottom: 12%;
+  overflow: hidden;
+}
+
+.jobs-stage__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 0.5cqw;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Transparent cards inside the stage — 3×3 compact */
+.jobs-stage .drawer-card {
+  background: transparent;
+  border-color: rgba(44, 42, 36, 0.22);
+  padding: 0.48cqw;
+  gap: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  box-sizing: border-box;
+}
+.jobs-stage .drawer-card__label {
+  font-size: 0.58cqw;
+  margin-bottom: 0.2cqw;
+}
+.jobs-stage .drawer-card__title {
+  font-size: 1.125cqw;
+  line-height: 1.1;
+  margin-bottom: 0.3cqw;
+}
+/* Body stretches so footer is always at the bottom */
+.jobs-stage .drawer-card__body {
+  font-size: 0.65cqw;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.jobs-stage .job-card__meta {
+  flex: 1;
+}
+.jobs-stage .job-card__foot {
+  margin-top: auto;
+  padding-top: 0.3cqw;
+}
+.jobs-stage .job-card__date {
+  font-size: 0.54cqw;
+}
+.jobs-stage .job-card__row {
+  font-size: 0.6cqw;
+}
+.jobs-stage .job-card__salary {
+  font-size: 0.62cqw;
+  font-weight: 600;
+}
+/* Scale down pin + view buttons */
+.jobs-stage .pin-btn {
+  padding: 2px;
+  font-size: 0.54cqw;
+}
+.jobs-stage .pin-btn svg {
+  width: 0.95cqw;
+  height: 0.95cqw;
+}
+.jobs-stage .btn {
+  font-size: 0.56cqw;
+  padding: 0.25cqw 0.5cqw;
+}
+.jobs-stage .drawer-card--hiring {
+  background: rgba(180, 80, 47, 0.06) !important;
+  border-left: 2px solid #b4502f !important;
+}
+.jobs-stage .skeleton {
+  min-height: 0;
+  height: 100%;
+}
+
+/* Pager — now sits inside head row on the right */
+.jobs-stage__pager {
+  display: flex;
+  align-items: center;
+  gap: 0.5cqw;
+  flex-shrink: 0;
+}
+.jobs-stage__pager-btn {
+  font-family: var(--font-display);
+  font-size: 0.72cqw;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink);
+  background: transparent;
+  border: 1px solid rgba(44, 42, 36, 0.35);
+  border-radius: var(--radius-sm);
+  padding: 0.35cqw 0.8cqw;
+  cursor: pointer;
+  transition: background 120ms ease;
+}
+.jobs-stage__pager-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.jobs-stage__pager-btn:not(:disabled):hover {
+  background: rgba(44, 42, 36, 0.08);
+}
+.jobs-stage__pager-info {
+  font-family: var(--font-display);
+  font-size: 0.7cqw;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-muted);
+}
+.jobs-stage__msg {
+  font-size: 0.85cqw;
+  color: var(--ink-muted);
+  margin: 0;
+}
+
+/* ---- Right page: search + firms — centred on right notebook page ---- */
+.jobs-stage__sidebar {
+  top: 30%;
+  left: 59%;
+  width: 25%;
+  bottom: 12%;
+  gap: 0.9cqw;
+}
+
+.jobs-stage__form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5cqw;
+  flex-shrink: 0;
+}
+
+/* State | Search term | Search button — one row */
+.jobs-stage__form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 0.5cqw;
+  align-items: end;
+}
+.jobs-stage__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25cqw;
+}
+.jobs-stage__field-label {
+  font-family: var(--font-display);
+  font-size: 0.65cqw;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--ink-muted);
+}
+.jobs-stage__select,
+.jobs-stage__input {
+  font-family: var(--font-body);
+  font-size: 0.78cqw;
+  color: var(--ink);
+  background: transparent;
+  border: 1px solid rgba(44, 42, 36, 0.35);
+  border-radius: var(--radius-sm);
+  padding: 0.4cqw 0.6cqw;
+}
+.jobs-stage__select:focus,
+.jobs-stage__input:focus {
+  outline: 2px solid var(--accent-rust);
+  outline-offset: 0;
+}
+.jobs-stage__search-btn {
+  font-family: var(--font-display);
+  font-size: 0.72cqw;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink);
+  background: transparent;
+  border: 1.5px solid var(--ink);
+  border-radius: var(--radius-sm);
+  padding: 0.4cqw 1cqw;
+  cursor: pointer;
+  align-self: auto;
+  transition: background 120ms ease, color 120ms ease;
+}
+.jobs-stage__search-btn:hover {
+  background: var(--ink);
+  color: var(--bg-base);
+}
+
+/* Firms list — 2 columns, 20 firms */
+.jobs-stage__firms {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+  border: 1px solid rgba(44, 42, 36, 0.22);
+  border-radius: var(--radius-sm);
+}
+.jobs-stage__firms-head {
+  font-family: var(--font-display);
+  font-size: 0.7cqw;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink);
+  padding: 0.42cqw 0.6cqw;
+  border-bottom: 1.5px solid rgba(44, 42, 36, 0.35);
+  flex-shrink: 0;
+}
+/* 2-column grid wrapper */
+.jobs-stage__firms-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  flex: 1;
+  align-content: stretch;
+  overflow: hidden;
+}
+.jobs-stage__firm-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.35cqw;
+  padding: 0.32cqw 0.6cqw;
+  border-bottom: 1px solid rgba(44, 42, 36, 0.1);
+  border-right: 1px solid rgba(44, 42, 36, 0.1);
+}
+
+.jobs-stage__firm-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1cqw;
+  flex: 1;
+  overflow: hidden;
+}
+.jobs-stage__firm-row:nth-child(even) {
+  border-right: none;
+}
+.jobs-stage__firm-row--hiring {
+  background: rgba(180, 80, 47, 0.08);
+  border-left: 2px solid #b4502f;
+  padding-left: calc(0.5cqw - 2px);
+}
+.jobs-stage__firm-rank {
+  font-family: var(--font-display);
+  font-size: 0.7cqw;
+  color: var(--ink-muted);
+  grid-row: 1;
+}
+.jobs-stage__firm-name {
+  font-size: 0.82cqw;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.jobs-stage__firm-note {
+  font-family: var(--font-display);
+  font-size: 0.58cqw;
+  line-height: 1.2;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.jobs-stage .firm-hiring-badge {
+  font-size: 0.52cqw;
+  padding: 1px 4px;
+}
+
+/* Fallback hidden by default; stage shown */
+.jobs-fallback { display: none; }
+
+@media (max-width: 860px) {
+  .jobs-stage { display: none; }
+  .jobs-wrap { margin-top: 0; }
+  .jobs-fallback { display: block; }
+}
+
+/* ===========================================================================
+   Jobs page layout. */
 
 .jobs-layout {
   display: grid;

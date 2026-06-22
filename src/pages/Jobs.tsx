@@ -32,9 +32,19 @@ const ARCH_FIRMS = [
   { name: 'BVN', note: 'Research-led practice' },
   { name: 'Lahznimmo', note: 'Public architecture' },
   { name: 'SJB', note: 'Housing & urban design' },
+  { name: 'ARM Architecture', note: 'Critical practice' },
+  { name: 'Lyons', note: 'Research & civic buildings' },
+  { name: 'Bates Smart', note: 'Workplace & hospitality' },
+  { name: 'Populous', note: 'Sports & entertainment' },
+  { name: 'Conrad Gargett', note: 'Queensland practice' },
+  { name: 'Warren and Mahoney', note: 'Trans-Tasman studio' },
+  { name: 'ThomsonAdsett', note: 'Health & education' },
+  { name: 'Group GSA', note: 'Multi-disciplinary' },
+  { name: 'Scott Carver', note: 'Retail & urban design' },
+  { name: 'NBRS Architecture', note: 'Community & education' },
 ]
 
-const PER_PAGE = 20
+const PER_PAGE = 9
 
 export function Jobs() {
   const [params] = useSearchParams()
@@ -51,7 +61,6 @@ export function Jobs() {
   const [status, setStatus] = useState<'loading' | 'ready' | 'empty' | 'error'>('loading')
   const [error, setError] = useState('')
 
-  // Fetch jobs whenever state / page / applied term changes.
   useEffect(() => {
     let live = true
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -69,21 +78,16 @@ export function Jobs() {
         setError(err instanceof ApiError ? err.message : "Adzuna didn't answer. Try again shortly.")
         setStatus('error')
       })
-    return () => {
-      live = false
-    }
+    return () => { live = false }
   }, [state, page, appliedTerm])
 
   const totalPages = Math.max(1, Math.ceil(count / PER_PAGE))
 
-  // Check if an ARCH_FIRM appears in the loaded job listings.
   const jobCompanies = jobs.map((j) => j.company.toLowerCase())
   function isHiring(firmName: string) {
     const needle = firmName.toLowerCase()
     return jobCompanies.some((c) => c.includes(needle) || needle.includes(c))
   }
-
-  // Check if a job card's company matches one of the curated ARCH_FIRMS.
   function isArchFirmJob(company: string) {
     const c = company.toLowerCase()
     return ARCH_FIRMS.some((f) => c.includes(f.name.toLowerCase()) || f.name.toLowerCase().includes(c))
@@ -96,120 +100,221 @@ export function Jobs() {
   }
 
   return (
-    <div className="container">
-      <PageHead
-        eyebrow="Job Searcher"
-        title="Who's hiring now"
-        lead="Live openings and the top architecture firms, filterable by country and term."
-      />
+    <div className="jobs-wrap">
 
-      <form className="jobs-controls" onSubmit={onSearch}>
-        <label className="field">
-          <span className="field__label">State</span>
-          <select
-            className="select"
-            value={state.where}
-            onChange={(e) => {
-              const s = AU_STATES.find((s) => s.where === e.target.value) ?? AU_STATES[0]
-              setState(s)
-              setPage(1)
-            }}
-          >
-            {AU_STATES.map((s) => (
-              <option key={s.where} value={s.where}>
-                {s.label}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="field" style={{ flex: 1, minWidth: 200 }}>
-          <span className="field__label">Search term</span>
-          <input
-            className="input"
-            value={term}
-            onChange={(e) => setTerm(e.target.value)}
-            placeholder="architecture"
-          />
-        </label>
-        <Button type="submit" arrow>
-          Search
-        </Button>
-      </form>
+      {/* ---- Photo stage (wide screens) ---- */}
+      <div className="jobs-stage" role="region" aria-label="Job Searcher">
 
-      <div className="jobs-layout">
-        <div>
-          <div className="view-head">
-            <h2>Openings</h2>
+        {/* Left page — header + pager side by side */}
+        <div className="jobs-stage__layer jobs-stage__head">
+          <div className="jobs-stage__head-text">
+            <span className="jobs-stage__eyebrow">Job Searcher</span>
+            <h1 className="jobs-stage__title">Who's<br />hiring now</h1>
+            <p className="jobs-stage__lead">
+              Live openings across Australia's top architecture firms.
+            </p>
           </div>
+          <div className="jobs-stage__pager">
+            <button
+              className="jobs-stage__pager-btn"
+              disabled={page <= 1}
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+            >← Prev</button>
+            <span className="jobs-stage__pager-info">
+              {page} / {totalPages}
+            </span>
+            <button
+              className="jobs-stage__pager-btn"
+              disabled={page >= totalPages}
+              onClick={() => setPage((p) => p + 1)}
+            >Next →</button>
+          </div>
+        </div>
 
+        {/* Left page — job cards grid only */}
+        <div className="jobs-stage__layer jobs-stage__cards">
           {status === 'loading' && (
-            <div className="jobs-grid">
-              {Array.from({ length: 6 }).map((_, i) => (
+            <div className="jobs-stage__grid">
+              {Array.from({ length: PER_PAGE }).map((_, i) => (
                 <div className="skeleton" key={i} />
               ))}
             </div>
           )}
-
           {status === 'error' && (
-            <Note title="Adzuna didn't answer" variant="error">
-              {error} If you just set up the app, check your Adzuna keys are in <code>.env</code>.
-            </Note>
+            <p className="jobs-stage__msg">{error}</p>
           )}
-
           {status === 'empty' && (
-            <Note title="No openings matched">Widen the country or term, then search again.</Note>
+            <p className="jobs-stage__msg">No openings matched. Widen the search.</p>
           )}
-
           {status === 'ready' && (
-            <>
-              <div className="jobs-grid">
-                {jobs.map((job) => (
-                  <JobCard key={job.id} job={job} country="au" highlighted={isArchFirmJob(job.company)} />
-                ))}
-              </div>
-              <div className="pager">
-                <Button
-                  variant="secondary"
-                  disabled={page <= 1}
-                  onClick={() => setPage((p) => Math.max(1, p - 1))}
-                >
-                  ← Prev
-                </Button>
-                <span className="pager__status">
-                  Page {page} of {totalPages} · {count.toLocaleString()} openings
-                </span>
-                <Button
-                  variant="secondary"
-                  disabled={page >= totalPages}
-                  onClick={() => setPage((p) => p + 1)}
-                >
-                  Next →
-                </Button>
-              </div>
-            </>
+            <div className="jobs-stage__grid">
+              {jobs.slice(0, PER_PAGE).map((job) => (
+                <JobCard key={job.id} job={job} country="au" highlighted={isArchFirmJob(job.company)} />
+              ))}
+            </div>
           )}
         </div>
 
-        <aside>
-          <div className="top-companies">
-            <div className="top-companies__head">
-              <span className="top-companies__title">Top Architecture Firms</span>
-            </div>
-            {ARCH_FIRMS.map((f, i) => (
-              <div className={`top-companies__row${isHiring(f.name) ? ' top-companies__row--hiring' : ''}`} key={f.name}>
-                <span className="top-companies__rank">{i + 1}</span>
-                <span className="top-companies__name">
-                  {f.name}
-                  {isHiring(f.name) && (
-                    <span className="firm-hiring-badge">Hiring</span>
-                  )}
-                </span>
-                <span className="top-companies__count">{f.note}</span>
+        {/* Right page — search form + architecture firms */}
+        <div className="jobs-stage__layer jobs-stage__sidebar">
+          <form className="jobs-stage__form" onSubmit={onSearch}>
+            <div className="jobs-stage__form-row">
+              <label className="jobs-stage__field">
+                <span className="jobs-stage__field-label">State</span>
+                <select
+                  className="jobs-stage__select"
+                  value={state.where}
+                  onChange={(e) => {
+                    const s = AU_STATES.find((s) => s.where === e.target.value) ?? AU_STATES[0]
+                    setState(s)
+                    setPage(1)
+                  }}
+                >
+                  {AU_STATES.map((s) => (
+                    <option key={s.where} value={s.where}>{s.label}</option>
+                  ))}
+                </select>
+              </label>
+              <label className="jobs-stage__field">
+                <span className="jobs-stage__field-label">Search term</span>
+                <input
+                  className="jobs-stage__input"
+                  value={term}
+                  onChange={(e) => setTerm(e.target.value)}
+                  placeholder="architecture"
+                />
+              </label>
+              <div className="jobs-stage__field">
+                <span className="jobs-stage__field-label">&nbsp;</span>
+                <button type="submit" className="jobs-stage__search-btn">Search →</button>
               </div>
-            ))}
+            </div>
+          </form>
+
+          <div className="jobs-stage__firms">
+            <div className="jobs-stage__firms-head">Top Architecture Firms</div>
+            <div className="jobs-stage__firms-grid">
+              {ARCH_FIRMS.map((f, i) => (
+                <div
+                  className={`jobs-stage__firm-row${isHiring(f.name) ? ' jobs-stage__firm-row--hiring' : ''}`}
+                  key={f.name}
+                >
+                  <span className="jobs-stage__firm-rank">{i + 1}</span>
+                  <div className="jobs-stage__firm-info">
+                    <span className="jobs-stage__firm-name">
+                      {f.name}
+                      {isHiring(f.name) && <span className="firm-hiring-badge">Hiring</span>}
+                    </span>
+                    <span className="jobs-stage__firm-note">{f.note}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
-        </aside>
+        </div>
+
       </div>
+
+      {/* ---- Stacked fallback (narrow screens) ---- */}
+      <div className="jobs-fallback">
+        <div className="container">
+          <PageHead
+            eyebrow="Job Searcher"
+            title="Who's hiring now"
+            lead="Live openings and the top architecture firms, filterable by state and term."
+          />
+
+          <form className="jobs-controls" onSubmit={onSearch}>
+            <label className="field">
+              <span className="field__label">State</span>
+              <select
+                className="select"
+                value={state.where}
+                onChange={(e) => {
+                  const s = AU_STATES.find((s) => s.where === e.target.value) ?? AU_STATES[0]
+                  setState(s)
+                  setPage(1)
+                }}
+              >
+                {AU_STATES.map((s) => (
+                  <option key={s.where} value={s.where}>{s.label}</option>
+                ))}
+              </select>
+            </label>
+            <label className="field" style={{ flex: 1, minWidth: 200 }}>
+              <span className="field__label">Search term</span>
+              <input
+                className="input"
+                value={term}
+                onChange={(e) => setTerm(e.target.value)}
+                placeholder="architecture"
+              />
+            </label>
+            <Button type="submit" arrow>Search</Button>
+          </form>
+
+          <div className="jobs-layout">
+            <div>
+              <div className="view-head"><h2>Openings</h2></div>
+
+              {status === 'loading' && (
+                <div className="jobs-grid">
+                  {Array.from({ length: 6 }).map((_, i) => (
+                    <div className="skeleton" key={i} />
+                  ))}
+                </div>
+              )}
+              {status === 'error' && (
+                <Note title="Adzuna didn't answer" variant="error">
+                  {error} If you just set up the app, check your Adzuna keys are in <code>.env</code>.
+                </Note>
+              )}
+              {status === 'empty' && (
+                <Note title="No openings matched">Widen the country or term, then search again.</Note>
+              )}
+              {status === 'ready' && (
+                <>
+                  <div className="jobs-grid">
+                    {jobs.map((job) => (
+                      <JobCard key={job.id} job={job} country="au" highlighted={isArchFirmJob(job.company)} />
+                    ))}
+                  </div>
+                  <div className="pager">
+                    <Button variant="secondary" disabled={page <= 1} onClick={() => setPage((p) => Math.max(1, p - 1))}>
+                      ← Prev
+                    </Button>
+                    <span className="pager__status">
+                      Page {page} of {totalPages} · {count.toLocaleString()} openings
+                    </span>
+                    <Button variant="secondary" disabled={page >= totalPages} onClick={() => setPage((p) => p + 1)}>
+                      Next →
+                    </Button>
+                  </div>
+                </>
+              )}
+            </div>
+
+            <aside>
+              <div className="top-companies">
+                <div className="top-companies__head">
+                  <span className="top-companies__title">Top Architecture Firms</span>
+                </div>
+                {ARCH_FIRMS.map((f, i) => (
+                  <div className={`top-companies__row${isHiring(f.name) ? ' top-companies__row--hiring' : ''}`} key={f.name}>
+                    <span className="top-companies__rank">{i + 1}</span>
+                    <span className="top-companies__name">
+                      {f.name}
+                      {isHiring(f.name) && <span className="firm-hiring-badge">Hiring</span>}
+                    </span>
+                    <span className="top-companies__count">{f.note}</span>
+                  </div>
+                ))}
+              </div>
+            </aside>
+          </div>
+        </div>
+      </div>
+
     </div>
   )
 }
@@ -242,9 +347,7 @@ function JobCard({ job, country, highlighted }: { job: Job; country: string; hig
             }}
           />
           {job.url && (
-            <LinkButton href={job.url} variant="secondary" arrow>
-              View
-            </LinkButton>
+            <LinkButton href={job.url} variant="secondary" arrow>View</LinkButton>
           )}
         </div>
       </div>
