@@ -1,0 +1,619 @@
+/* ===========================================================================
+   SCHOLARSHIPS — photographic stage.
+   scholarships-bg.jpg is the background. Same notebook layout as jobs-bg.jpg.
+   Content sits over left (cards) and right (stats/deadlines/filters) pages.
+   Below breakpoint the stage hides and the stacked fallback shows.
+=========================================================================== */
+
+.schols-wrap {
+  background: #1a1714;
+}
+
+.schols-stage {
+  position: relative;
+  width: 100%;
+  max-width: 1536px;
+  margin: 0 auto;
+  aspect-ratio: 3 / 2;
+  background: url('/scholarships-bg.jpg') center / cover no-repeat;
+  container-type: inline-size;
+  overflow: hidden;
+}
+
+.schols-stage__layer {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---- Left page: header row (text left, pager right) ---- */
+.schols-stage__head {
+  top: 23%;
+  left: 13%;
+  width: 40%;
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1cqw;
+}
+
+.schols-stage__head-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.38cqw;
+}
+
+.schols-stage__eyebrow {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: 0.54cqw;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: #f4ead2;
+  background: #2c2a24;
+  padding: 0.21cqw 0.49cqw;
+  border-radius: 2px;
+  align-self: flex-start;
+}
+
+.schols-stage__title {
+  font-size: 2.175cqw;
+  line-height: 1.0;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  margin: 0.3cqw 0 0;
+  color: var(--ink);
+}
+
+.schols-stage__lead {
+  font-size: 0.79cqw;
+  line-height: 1.35;
+  color: var(--ink-muted);
+  margin: 0;
+  max-width: 22cqw;
+}
+
+/* ---- Left page: scholarship cards ---- */
+.schols-stage__cards {
+  top: 38%;
+  left: 13%;
+  width: 40%;
+  bottom: 12%;
+  overflow: hidden;
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+}
+
+.schols-stage__cards-inner {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+  min-height: 0;
+}
+.schols-stage__cards-inner::-webkit-scrollbar {
+  display: none;
+}
+
+/* Scroll hint — down-arrow box just right of the card grid, bottom row level */
+.schols-stage__scroll-hint {
+  position: absolute;
+  left: 53.8%;
+  bottom: 12%;
+  width: 1.12cqw;
+  height: 1.12cqw;
+  color: rgba(44, 42, 36, 0.38);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: color 120ms ease;
+}
+.schols-stage__scroll-hint:hover {
+  color: rgba(44, 42, 36, 0.7);
+}
+
+.schols-stage__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 0.5cqw;
+  height: 100%;
+}
+
+/* Transparent cards inside the stage — 3×3 compact */
+.schols-stage .drawer-card {
+  background: transparent;
+  border-color: rgba(44, 42, 36, 0.22);
+  padding: 0.48cqw;
+  gap: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  box-sizing: border-box;
+}
+.schols-stage .drawer-card__label {
+  font-size: 0.58cqw;
+  margin-bottom: 0.2cqw;
+}
+.schols-stage .drawer-card__title {
+  font-size: 1.125cqw;
+  line-height: 1.1;
+  margin-bottom: 0.3cqw;
+}
+.schols-stage .drawer-card__body {
+  font-size: 0.65cqw;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.schols-stage .schol-card__meta {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15cqw;
+}
+.schols-stage .schol-card__row {
+  font-size: 0.6cqw;
+  color: var(--ink-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.schols-stage .schol-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2cqw;
+  margin-top: 0.15cqw;
+}
+.schols-stage .schol-card__tag {
+  font-family: var(--font-display);
+  font-size: 0.48cqw;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-muted);
+  border: 1px solid rgba(44, 42, 36, 0.25);
+  border-radius: 2px;
+  padding: 0.08cqw 0.28cqw;
+  white-space: nowrap;
+}
+.schols-stage .schol-card__foot {
+  margin-top: auto;
+  padding-top: 0.3cqw;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.3cqw;
+}
+.schols-stage .schol-card__deadline {
+  font-family: var(--font-display);
+  font-size: 0.81cqw;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--ink-muted);
+  white-space: nowrap;
+}
+.schols-stage .schol-card__deadline--soon {
+  color: #b4502f;
+  font-weight: 700;
+}
+/* Scale down pin + open buttons */
+.schols-stage .pin-btn {
+  padding: 2px;
+  font-size: 0.54cqw;
+}
+.schols-stage .pin-btn svg {
+  width: 0.95cqw;
+  height: 0.95cqw;
+}
+.schols-stage .btn {
+  font-size: 0.56cqw;
+  padding: 0.25cqw 0.5cqw;
+}
+.schols-stage .skeleton {
+  min-height: 0;
+  height: 100%;
+}
+.schols-stage__msg {
+  font-size: 0.85cqw;
+  color: var(--ink-muted);
+  margin: 0;
+}
+
+/* ---- Pager ---- */
+.schols-stage__pager {
+  display: flex;
+  align-items: center;
+  gap: 0.5cqw;
+  flex-shrink: 0;
+}
+.schols-stage__pager-btn {
+  font-family: var(--font-display);
+  font-size: 0.72cqw;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink);
+  background: transparent;
+  border: 1px solid rgba(44, 42, 36, 0.35);
+  border-radius: var(--radius-sm);
+  padding: 0.35cqw 0.8cqw;
+  cursor: pointer;
+  transition: background 120ms ease;
+}
+.schols-stage__pager-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.schols-stage__pager-btn:not(:disabled):hover {
+  background: rgba(44, 42, 36, 0.08);
+}
+.schols-stage__pager-info {
+  font-family: var(--font-display);
+  font-size: 0.7cqw;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-muted);
+}
+
+/* ---- Right page: stats + deadlines + filters ---- */
+.schols-stage__sidebar {
+  top: 30%;
+  left: 59%;
+  width: 25%;
+  bottom: 12%;
+  gap: 0.9cqw;
+}
+
+/* Stats row — 3 figures */
+.schols-stage__stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border: 1px solid rgba(44, 42, 36, 0.22);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.schols-stage__stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.55cqw 0.4cqw;
+  gap: 0.15cqw;
+  border-right: 1px solid rgba(44, 42, 36, 0.18);
+}
+.schols-stage__stat:last-child {
+  border-right: none;
+}
+.schols-stage__stat-num {
+  font-family: var(--font-display);
+  font-size: 1.5cqw;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--ink);
+}
+.schols-stage__stat-label {
+  font-family: var(--font-display);
+  font-size: 0.5cqw;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-muted);
+  text-align: center;
+}
+.schols-stage__stat--alert .schols-stage__stat-num {
+  color: #b4502f;
+}
+
+/* Shared panel head */
+.schols-stage__panel-head {
+  font-family: var(--font-display);
+  font-size: 0.7cqw;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink);
+  padding: 0.42cqw 0.6cqw;
+  border-bottom: 1.5px solid rgba(44, 42, 36, 0.35);
+  flex-shrink: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* ---- Upcoming deadlines strip ---- */
+.schols-stage__deadlines {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(44, 42, 36, 0.22);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.schols-stage__deadlines-empty {
+  font-size: 0.65cqw;
+  color: var(--ink-muted);
+  padding: 0.5cqw 0.6cqw;
+}
+.schols-stage__deadline-row {
+  display: grid;
+  grid-template-columns: 2.8cqw 1fr;
+  align-items: center;
+  gap: 0.4cqw;
+  padding: 0.48cqw 0.6cqw;
+  border-bottom: 1px solid rgba(44, 42, 36, 0.1);
+}
+.schols-stage__deadline-row:last-child {
+  border-bottom: none;
+}
+.schols-stage__deadline-count {
+  font-family: var(--font-display);
+  font-size: 0.65cqw;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-muted);
+  white-space: nowrap;
+}
+.schols-stage__deadline-count--soon {
+  color: #b4502f;
+}
+.schols-stage__deadline-title {
+  font-size: 0.68cqw;
+  font-weight: 500;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+}
+
+/* ---- Tag filter pills + toggles panel ---- */
+.schols-stage__filters {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+  border: 1px solid rgba(44, 42, 36, 0.22);
+  border-radius: var(--radius-sm);
+}
+.schols-stage__filter-clear {
+  font-family: var(--font-display);
+  font-size: 0.55cqw;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #b4502f;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+.schols-stage__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35cqw;
+  padding: 0.55cqw 0.6cqw;
+  overflow-y: auto;
+  flex: 1;
+  align-content: flex-start;
+}
+.schols-stage__tag-pill {
+  font-family: var(--font-display);
+  font-size: 0.62cqw;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-muted);
+  background: transparent;
+  border: 1px solid rgba(44, 42, 36, 0.3);
+  border-radius: var(--radius-sm);
+  padding: 0.25cqw 0.6cqw;
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease, border-color 120ms ease;
+  white-space: nowrap;
+}
+.schols-stage__tag-pill:hover {
+  background: rgba(44, 42, 36, 0.07);
+  border-color: rgba(44, 42, 36, 0.5);
+  color: var(--ink);
+}
+.schols-stage__tag-pill--active {
+  background: #2c2a24;
+  color: #f4ead2;
+  border-color: #2c2a24;
+}
+.schols-stage__tag-pill--active:hover {
+  background: #3c3a34;
+  border-color: #3c3a34;
+  color: #f4ead2;
+}
+
+/* Toggles at the bottom of the filter panel — reuse pill style */
+.schols-stage__toggles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35cqw;
+  padding: 0 0.6cqw 0.55cqw;
+  flex-shrink: 0;
+}
+
+/* Fallback hidden by default; stage shown */
+.schols-fallback { display: none; }
+
+@media (max-width: 860px) {
+  .schols-stage { display: none; }
+  .schols-wrap { margin-top: 0; }
+  .schols-fallback { display: block; }
+}
+
+/* ===========================================================================
+   Scholarships fallback layout (mobile / narrow) */
+
+.schols-layout {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: var(--space-6);
+  align-items: start;
+  margin-top: var(--space-5);
+}
+
+.schols-stats-bar {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+.schols-stat-box {
+  border: var(--rule-thin) solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--bg-card);
+  padding: var(--space-3) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.schols-stat-box__num {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--ink);
+}
+.schols-stat-box__num--alert {
+  color: #b4502f;
+}
+.schols-stat-box__label {
+  font-family: var(--font-display);
+  font-size: var(--fs-eyebrow);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: var(--track-eyebrow);
+  color: var(--ink-muted);
+}
+
+/* Sidebar (fallback) */
+.schols-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+.schols-sidebar__panel {
+  border: var(--rule-thin) solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--bg-card);
+}
+.schols-sidebar__head {
+  font-family: var(--font-display);
+  font-size: var(--fs-label);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: var(--track-label);
+  color: var(--ink);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: var(--rule-bold) solid var(--ink);
+}
+.schols-sidebar__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+}
+.schols-sidebar__pill {
+  font-family: var(--font-display);
+  font-size: var(--fs-badge);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-muted);
+  background: transparent;
+  border: var(--rule-thin) solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease, border-color 120ms ease;
+}
+.schols-sidebar__pill:hover {
+  border-color: var(--ink);
+  color: var(--ink);
+}
+.schols-sidebar__pill--active {
+  background: var(--ink);
+  color: var(--bg-base);
+  border-color: var(--ink);
+}
+.schols-sidebar__toggles {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border-top: var(--rule-thin) solid var(--line);
+}
+.schols-sidebar__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--fs-body-sm);
+  color: var(--ink-muted);
+  cursor: pointer;
+}
+
+/* Scholarship cards (fallback) */
+.schol-card-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.schol-card-fb {
+  border: var(--rule-thin) solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--bg-card);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.schol-card-fb__provider {
+  font-family: var(--font-display);
+  font-size: var(--fs-eyebrow);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: var(--track-eyebrow);
+  color: var(--ink-muted);
+}
+.schol-card-fb__title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+  line-height: 1.1;
+}
+.schol-card-fb__meta {
+  font-size: var(--fs-body-sm);
+  color: var(--ink-muted);
+}
+.schol-card-fb__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-top: var(--space-1);
+}
+.schol-card-fb__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+@media (max-width: 860px) {
+  .schols-layout {
+    grid-template-columns: 1fr;
+  }
+  .schols-stats-bar {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { PageHead } from '../components/PageHead'
 import { Note } from '../components/Note'
@@ -23,6 +23,8 @@ export function Competitions() {
   const [params] = useSearchParams()
   const [tag, setTag] = useState(params.get('tag') ?? '')
   const [stagePage, setStagePage] = useState(1)
+  const cardsScrollRef = useRef<HTMLDivElement>(null)
+  const [cardsOverflow, setCardsOverflow] = useState(false)
 
   const projects = useMemo(() => loadProjects(), [])
   const profile = useMemo(() => projectKeywordProfile(projects), [projects])
@@ -46,6 +48,18 @@ export function Competitions() {
 
   // Reset stage page when filter changes
   useEffect(() => { setStagePage(1) }, [tag])
+
+  // Show scroll hint whenever the cards inner div overflows its container
+  useEffect(() => {
+    const el = cardsScrollRef.current
+    if (!el) return
+    const check = () => setCardsOverflow(el.scrollHeight > el.clientHeight + 2)
+    check()
+    const ro = new ResizeObserver(check)
+    ro.observe(el)
+    el.addEventListener('scroll', check)
+    return () => { ro.disconnect(); el.removeEventListener('scroll', check) }
+  }, [status, items.length])
 
   const ranked: Ranked<Competition>[] = useMemo(() => {
     const scored = items.map((item) => ({
@@ -133,29 +147,43 @@ export function Competitions() {
 
         {/* Left page — competition cards grid */}
         <div className="comps-stage__layer comps-stage__cards">
-          {status === 'loading' && (
-            <div className="comps-stage__grid">
-              {Array.from({ length: STAGE_PER_PAGE }).map((_, i) => (
-                <div className="skeleton" key={i} />
-              ))}
-            </div>
-          )}
-          {status === 'error' && (
-            <p className="comps-stage__msg">{error}</p>
-          )}
-          {status === 'ready' && configured && items.length === 0 && (
-            <p className="comps-stage__msg">No competitions found. Check back later.</p>
-          )}
-          {status === 'ready' && configured && items.length > 0 && (
-            <div className="comps-stage__grid">
-              {stageVisible.map(({ item, matched }) => (
-                <StageCompCard key={item.id} item={item} matched={matched} />
-              ))}
-              {/* Fill empty cells so grid stays 3×3 */}
-              {Array.from({ length: Math.max(0, STAGE_PER_PAGE - stageVisible.length) }).map((_, i) => (
-                <div key={`empty-${i}`} style={{ border: '1px solid rgba(44,42,36,0.1)', borderRadius: 'var(--radius-sm)' }} />
-              ))}
-            </div>
+          <div className="comps-stage__cards-inner" ref={cardsScrollRef}>
+            {status === 'loading' && (
+              <div className="comps-stage__grid">
+                {Array.from({ length: STAGE_PER_PAGE }).map((_, i) => (
+                  <div className="skeleton" key={i} />
+                ))}
+              </div>
+            )}
+            {status === 'error' && (
+              <p className="comps-stage__msg">{error}</p>
+            )}
+            {status === 'ready' && configured && items.length === 0 && (
+              <p className="comps-stage__msg">No competitions found. Check back later.</p>
+            )}
+            {status === 'ready' && configured && items.length > 0 && (
+              <div className="comps-stage__grid">
+                {stageVisible.map(({ item, matched }) => (
+                  <StageCompCard key={item.id} item={item} matched={matched} />
+                ))}
+                {/* Fill empty cells so grid stays 3×3 */}
+                {Array.from({ length: Math.max(0, STAGE_PER_PAGE - stageVisible.length) }).map((_, i) => (
+                  <div key={`empty-${i}`} style={{ border: '1px solid rgba(44,42,36,0.1)', borderRadius: 'var(--radius-sm)' }} />
+                ))}
+              </div>
+            )}
+          </div>
+          {cardsOverflow && (
+            <button
+              className="comps-stage__scroll-hint"
+              aria-label="Scroll cards down"
+              onClick={() => cardsScrollRef.current?.scrollTo({ top: cardsScrollRef.current.scrollHeight, behavior: 'smooth' })}
+            >
+              <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="0.75" y="0.75" width="12.5" height="12.5" rx="2.25" stroke="currentColor" strokeWidth="1"/>
+                <polyline points="4,5.5 7,8.5 10,5.5" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
           )}
         </div>
 
@@ -390,7 +418,7 @@ function StageCompCard({ item, matched }: { item: Competition; matched: string[]
             {deadlineLabel}
           </span>
         )}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.3cqw' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.3cqw', marginLeft: 'auto' }}>
           <PinButton
             item={{
               id: item.id,

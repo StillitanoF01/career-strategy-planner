@@ -81,6 +81,20 @@
   width: 40%;
   bottom: 12%;
   overflow: hidden;
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+}
+
+.comps-stage__cards-inner {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+  min-height: 0;
+}
+.comps-stage__cards-inner::-webkit-scrollbar {
+  display: none;
 }
 
 .comps-stage__grid {
@@ -89,7 +103,24 @@
   grid-template-rows: repeat(3, 1fr);
   gap: 0.5cqw;
   height: 100%;
-  overflow: hidden;
+}
+
+/* Scroll hint — only rendered when content overflows */
+.comps-stage__scroll-hint {
+  position: absolute;
+  left: 53.8%;
+  bottom: 12%;
+  width: 1.12cqw;
+  height: 1.12cqw;
+  color: rgba(44, 42, 36, 0.38);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: color 120ms ease;
+}
+.comps-stage__scroll-hint:hover {
+  color: rgba(44, 42, 36, 0.7);
 }
 
 /* Transparent cards inside the stage — 3×3 compact */
