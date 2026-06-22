@@ -92,7 +92,7 @@ export function projectKeywordProfile(projects: Project[]): string[] {
   ])
   for (const p of projects) {
     for (const word of p.title.toLowerCase().split(/[^a-z0-9]+/)) {
-      if (word.length >= 4 && !STOP.has(word)) profile.add(word)
+      if (word.length >= 3 && !STOP.has(word)) profile.add(word)
     }
   }
   return [...profile]
@@ -108,6 +108,6 @@ export function relevanceAgainstProfile(
   profile: string[],
 ): { score: number; matched: string[] } {
   const hay = `${text} ${tags.join(' ')}`.toLowerCase()
-  const matched = [...new Set(profile.filter((t) => t.length >= 3 && hay.includes(t)))]
+  const matched = [...new Set(profile.filter((t) => t.length >= 2 && hay.includes(t)))]
   return { score: matched.length, matched }
 }
