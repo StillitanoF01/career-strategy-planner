@@ -95,7 +95,6 @@ export function Bench() {
           <p className="stage__lead">
             Label what you've built, see what the shop wants, and pick your next move.
           </p>
-          <p className="stage__stats">{stats}</p>
         </div>
 
         <div className="stage__layer stage__cards">

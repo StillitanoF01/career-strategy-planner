@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { NavLink, Route, Routes } from 'react-router-dom'
-import { StatusBadge } from './components/StatusBadge'
+import { IconChevronDown } from '@tabler/icons-react'
 import { ProfileModal } from './components/ProfileModal'
 import { useProfile } from './lib/store'
 import { Bench } from './pages/Bench'
@@ -52,8 +52,8 @@ function App() {
             onClick={() => setShowProfile(true)}
           >
             {profile?.name ? profile.name : 'Profile'}
+            <IconChevronDown size={14} stroke={2} />
           </button>
-          <StatusBadge>OPEN</StatusBadge>
         </div>
       </header>
 

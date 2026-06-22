@@ -8,6 +8,7 @@
 
 .stage-wrap {
   margin: calc(-1 * var(--space-6)) 0 0; /* cancel app-main top padding */
+  background: #1a0f06; /* match dark wood at bottom of bench image */
 }
 
 .stage {
@@ -32,9 +33,9 @@
 
 /* Name plate (rendered, since the photo has none). */
 .stage__plate {
-  top: 3%;
+  top: 4.2%;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(calc(-50% - 0.3cqw));
   padding: 0.55cqw 1.6cqw;
   font-family: var(--font-display);
   font-size: 1.15cqw;
@@ -50,31 +51,22 @@
 }
 
 .stage__head {
-  top: 8.5%;
+  top: 15%;
   left: 13%;
   width: 74%;
 }
 .stage__title {
-  font-size: 3.5cqw;
+  font-size: 2.9cqw;
   line-height: 1.0;
   text-transform: uppercase;
   letter-spacing: 0.01em;
-  margin: 0 0 1cqw;
+  margin: 0 0 0.7cqw;
 }
 .stage__lead {
-  font-size: 1.35cqw;
+  font-size: 1.15cqw;
   line-height: 1.35;
   color: var(--ink-muted);
   max-width: 40cqw;
-  margin: 0 0 0.8cqw;
-}
-.stage__stats {
-  font-family: var(--font-display);
-  font-size: 0.95cqw;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: var(--track-eyebrow);
-  color: var(--ink-muted);
   margin: 0;
 }
 

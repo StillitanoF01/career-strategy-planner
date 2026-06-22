@@ -94,30 +94,7 @@ export function ProfileModal({
               placeholder="housing, adaptive reuse, timber"
             />
           </label>
-          <div className="field">
-            <span className="field__label">Units</span>
-            <div className="radio-row">
-              <label>
-                <input
-                  type="radio"
-                  name="units"
-                  checked={units === 'metric'}
-                  onChange={() => setUnits('metric')}
-                />
-                Metric
-              </label>
-              <label>
-                <input
-                  type="radio"
-                  name="units"
-                  checked={units === 'imperial'}
-                  onChange={() => setUnits('imperial')}
-                />
-                Imperial
-              </label>
-            </div>
-          </div>
-          <div className="modal__actions">
+<div className="modal__actions">
             <Button type="button" variant="secondary" onClick={onClose}>
               Skip
             </Button>

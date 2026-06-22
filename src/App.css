@@ -51,11 +51,24 @@
   color: var(--ink);
   border-bottom-color: var(--accent-rust);
 }
+.app-nav__link:has(svg) {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
 
 /* ---------- Content ---------- */
 .app-main {
   flex: 1;
   padding: var(--space-6) 0 var(--space-8);
+}
+.app-main:has(.stage-wrap) {
+  padding-bottom: 0;
+  display: flex;
+  flex-direction: column;
+}
+.app-main:has(.stage-wrap) .stage-wrap {
+  flex: 1;
 }
 
 /* ---------- Footer ---------- */
