@@ -142,20 +142,29 @@
   font-weight: 500;
   grid-row: 1;
 }
+.top-companies__row--hiring {
+  background: rgba(163, 83, 46, 0.08);
+  border-left: 3px solid var(--accent);
+  padding-left: calc(var(--space-4) - 3px);
+}
 .firm-hiring-badge {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
   margin-left: var(--space-2);
-  padding: 1px 5px;
+  padding: 2px 8px;
   font-family: var(--font-display);
-  font-size: var(--fs-eyebrow);
-  font-weight: 600;
-  letter-spacing: var(--track-eyebrow);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--bg);
-  background: var(--accent);
-  border-radius: 2px;
+  color: #b4502f;
+  background: rgba(180, 80, 47, 0.1);
+  border: 1px solid #b4502f;
+  border-radius: 3px;
   vertical-align: middle;
-  line-height: 1.4;
+  line-height: 1;
+  position: relative;
+  top: -1px;
 }
 .top-companies__count {
   font-family: var(--font-display);
