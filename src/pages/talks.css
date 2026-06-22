@@ -1,4 +1,407 @@
-/* Talks map page. */
+/* ===========================================================================
+   TALKS — photographic stage.
+   talks-bg.jpg is the background. Same notebook layout as jobs-bg.jpg.
+   Left page: header + map. Right page: filters + 2×3 event cards.
+   Below breakpoint the stage hides and the stacked fallback shows.
+=========================================================================== */
+
+.talks-wrap {
+  background: #1a1714;
+}
+
+.talks-stage {
+  position: relative;
+  width: 100%;
+  max-width: 1536px;
+  margin: 0 auto;
+  aspect-ratio: 3 / 2;
+  background: url('/talks-bg.jpg') center / cover no-repeat;
+  container-type: inline-size;
+  overflow: hidden;
+}
+
+.talks-stage__layer {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---- Left page: header ---- */
+.talks-stage__head {
+  top: 23%;
+  left: 13%;
+  width: 40%;
+  flex-direction: column;
+  gap: 0.38cqw;
+}
+
+.talks-stage__head-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.38cqw;
+}
+
+.talks-stage__eyebrow {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: 0.54cqw;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: #f4ead2;
+  background: #2c2a24;
+  padding: 0.21cqw 0.49cqw;
+  border-radius: 2px;
+  align-self: flex-start;
+}
+
+.talks-stage__title {
+  font-size: 2.175cqw;
+  line-height: 1.0;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  margin: 0.3cqw 0 0;
+  color: var(--ink);
+}
+
+.talks-stage__lead {
+  font-size: 0.79cqw;
+  line-height: 1.35;
+  color: var(--ink-muted);
+  margin: 0;
+  max-width: 22cqw;
+}
+
+/* ---- Left page: map ---- */
+.talks-stage__map {
+  top: 38%;
+  left: 13%;
+  width: 40%;
+  bottom: 12%;
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid rgba(44, 42, 36, 0.3);
+}
+
+.talks-map-gl {
+  width: 100%;
+  height: 100%;
+  filter: saturate(0.85);
+}
+
+/* MapLibre popup styling to match site palette */
+.maplibregl-popup-content {
+  background: var(--bg-card);
+  border: 1px solid rgba(44, 42, 36, 0.22);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 2px 8px rgba(44, 42, 36, 0.12);
+  padding: 0.6cqw 0.7cqw;
+  font-family: var(--font-body);
+  min-width: 14cqw;
+}
+.maplibregl-popup-tip {
+  border-top-color: var(--bg-card) !important;
+}
+.maplibregl-ctrl-attrib {
+  font-size: 9px;
+  background: rgba(227, 215, 198, 0.7) !important;
+}
+
+/* Zoom +/- controls */
+.maplibregl-ctrl-group {
+  background: #E3D7C6 !important;
+  border: 1px solid rgba(107, 85, 68, 0.35) !important;
+  box-shadow: none !important;
+  border-radius: 2px !important;
+}
+.maplibregl-ctrl-group button {
+  background-color: transparent !important;
+}
+.maplibregl-ctrl-group button + button {
+  border-top: 1px solid rgba(107, 85, 68, 0.2) !important;
+}
+.maplibregl-ctrl-zoom-in .maplibregl-ctrl-icon,
+.maplibregl-ctrl-zoom-out .maplibregl-ctrl-icon {
+  filter: invert(28%) sepia(18%) saturate(600%) hue-rotate(345deg) brightness(55%);
+}
+
+/* ---- Right page: filters + event cards ---- */
+.talks-stage__sidebar {
+  top: 30%;
+  left: 59%;
+  width: 25%;
+  bottom: 12%;
+  gap: 0.9cqw;
+}
+
+/* Shared panel head — matches scholarships / jobs */
+.talks-stage__panel-head {
+  font-family: var(--font-display);
+  font-size: 0.7cqw;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink);
+  padding: 0.42cqw 0.6cqw;
+  border-bottom: 1.5px solid rgba(44, 42, 36, 0.35);
+  flex-shrink: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* ---- Filters panel ---- */
+.talks-stage__filters {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  border: 1px solid rgba(44, 42, 36, 0.22);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.talks-stage__pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35cqw;
+  padding: 0.55cqw 0.6cqw;
+}
+
+.talks-stage__pill {
+  font-family: var(--font-display);
+  font-size: 0.62cqw;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-muted);
+  background: transparent;
+  border: 1px solid rgba(44, 42, 36, 0.3);
+  border-radius: var(--radius-sm);
+  padding: 0.25cqw 0.6cqw;
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease, border-color 120ms ease;
+  white-space: nowrap;
+}
+.talks-stage__pill:hover {
+  background: rgba(44, 42, 36, 0.07);
+  border-color: rgba(44, 42, 36, 0.5);
+  color: var(--ink);
+}
+.talks-stage__pill--active {
+  background: #2c2a24;
+  color: #f4ead2;
+  border-color: #2c2a24;
+}
+.talks-stage__pill--active:hover {
+  background: #3c3a34;
+  border-color: #3c3a34;
+  color: #f4ead2;
+}
+
+.talks-stage__pill-count {
+  opacity: 0.6;
+  margin-left: 0.25cqw;
+}
+
+/* ---- Events panel ---- */
+.talks-stage__events {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+  border: 1px solid rgba(44, 42, 36, 0.22);
+  border-radius: var(--radius-sm);
+  min-height: 0;
+}
+
+.talks-stage__msg {
+  font-size: 0.85cqw;
+  color: var(--ink-muted);
+  padding: 0.6cqw;
+  margin: 0;
+}
+
+/* ---- Pager ---- */
+.talks-stage__pager {
+  display: flex;
+  align-items: center;
+  gap: 0.4cqw;
+  flex-shrink: 0;
+}
+.talks-stage__pager-btn {
+  font-family: var(--font-display);
+  font-size: 0.62cqw;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink);
+  background: transparent;
+  border: 1px solid rgba(44, 42, 36, 0.35);
+  border-radius: var(--radius-sm);
+  padding: 0.28cqw 0.6cqw;
+  cursor: pointer;
+  transition: background 120ms ease;
+}
+.talks-stage__pager-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.talks-stage__pager-btn:not(:disabled):hover {
+  background: rgba(44, 42, 36, 0.08);
+}
+.talks-stage__pager-info {
+  font-family: var(--font-display);
+  font-size: 0.62cqw;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-muted);
+}
+
+/* ---- 2×3 event card grid ---- */
+.talks-stage__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 0.5cqw;
+  padding: 0.5cqw;
+  flex: 1;
+  min-height: 0;
+}
+
+.talks-stage__card {
+  background: transparent;
+  border: 1px solid rgba(44, 42, 36, 0.22);
+  border-radius: 2px;
+  padding: 0.48cqw;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  transition: border-color 120ms ease;
+  overflow: hidden;
+  position: relative;
+}
+.talks-stage__card:hover,
+.talks-stage__card.is-selected {
+  border-color: #b5512e;
+}
+
+.talks-stage__card-foot {
+  margin-top: auto;
+  padding-top: 0.3cqw;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.3cqw;
+}
+
+.talks-stage__card-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.3cqw;
+}
+
+.talks-stage__card-date {
+  font-family: var(--font-display);
+  font-size: 0.81cqw;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--ink-muted);
+  white-space: nowrap;
+}
+
+.talks-stage__card-label {
+  font-family: var(--font-display);
+  font-size: 0.58cqw;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-muted);
+  margin-bottom: 0.2cqw;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.talks-stage__card-badge {
+  position: absolute;
+  top: 0.48cqw;
+  right: 0.48cqw;
+  background: #b5512e;
+  color: #fbe9df;
+  font-family: var(--font-display);
+  font-size: 0.45cqw;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.08cqw 0.28cqw;
+  border-radius: 2px;
+  white-space: nowrap;
+}
+
+.talks-stage__card-name {
+  font-family: var(--font-display);
+  font-size: 1.125cqw;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  color: var(--ink);
+  line-height: 1.1;
+  margin-bottom: 0.3cqw;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.talks-stage__card-body {
+  font-size: 0.65cqw;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1cqw;
+}
+
+.talks-stage__card-meta {
+  font-size: 0.6cqw;
+  color: var(--ink-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
+}
+
+.talks-stage__card-empty {
+  border: 1px dashed rgba(44, 42, 36, 0.1);
+  border-radius: 2px;
+}
+
+/* Scale pin + open buttons to match competition card proportions */
+.talks-stage .pin-btn {
+  padding: 2px;
+  font-size: 0.54cqw;
+  flex-shrink: 0;
+}
+.talks-stage .pin-btn svg {
+  width: 0.95cqw;
+  height: 0.95cqw;
+}
+.talks-stage .btn {
+  font-size: 0.56cqw;
+  padding: 0.25cqw 0.5cqw;
+}
+
+/* Fallback hidden by default; stage shown */
+.talks-fallback { display: none; }
+
+@media (max-width: 860px) {
+  .talks-stage { display: none; }
+  .talks-wrap { margin-top: 0; }
+  .talks-fallback { display: block; }
+}
+
+/* ===========================================================================
+   Talks fallback layout (mobile / narrow) */
 
 .talks-controls {
   display: flex;
@@ -8,7 +411,7 @@
   margin-bottom: var(--space-4);
 }
 
-/* Category filter chips (sharp, ink active — Workshop Bench, not SaaS pills). */
+/* Category filter chips */
 .cat-filters {
   display: flex;
   flex-wrap: wrap;
@@ -80,18 +483,6 @@
   border-radius: var(--radius-sm);
   overflow: hidden;
 }
-.talks-map .leaflet-container {
-  height: 100%;
-  width: 100%;
-  background: var(--bg-panel);
-  font-family: var(--font-body);
-}
-
-/* Pins carry no Leaflet default image — pure SVG. */
-.rust-pin {
-  background: none;
-  border: none;
-}
 
 .talks-list {
   display: flex;
@@ -144,6 +535,23 @@
   font-size: 13px;
   color: var(--ink-muted);
   margin-bottom: 6px;
+}
+.talk-popup__link {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink);
+  text-decoration: none;
+  border: 1px solid rgba(44, 42, 36, 0.35);
+  border-radius: var(--radius-sm);
+  padding: 3px 8px;
+  margin-top: 4px;
+}
+.talk-popup__link:hover {
+  background: rgba(44, 42, 36, 0.07);
 }
 
 @media (max-width: 860px) {

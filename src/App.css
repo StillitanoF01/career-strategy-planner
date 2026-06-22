@@ -70,7 +70,8 @@
 .app-main:has(.stage-wrap) .stage-wrap {
   flex: 1;
 }
-.app-main:has(.jobs-wrap) {
+.app-main:has(.jobs-wrap),
+.app-main:has(.talks-wrap) {
   padding: 0;
   background: #1a1714;
 }

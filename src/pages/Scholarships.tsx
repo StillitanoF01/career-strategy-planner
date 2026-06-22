@@ -134,7 +134,7 @@ export function Scholarships() {
             <span className="schols-stage__eyebrow">Scholarship Checker</span>
             <h1 className="schols-stage__title">Scholarships<br />worth chasing</h1>
             <p className="schols-stage__lead">
-              Ranked by fit to your projects and profile — no AI, just keyword overlap.
+              Ranked by fit to your projects and profile.
             </p>
           </div>
           <div className="schols-stage__pager">
@@ -285,7 +285,7 @@ export function Scholarships() {
           <PageHead
             eyebrow="Scholarship Checker"
             title="Scholarships worth chasing"
-            lead="Ranked by fit to your projects and profile — no AI, just keyword overlap."
+            lead="Ranked by fit to your projects and profile."
           />
 
           {status === 'loading' && <Note title="Reaching the scholarship boards…" />}
