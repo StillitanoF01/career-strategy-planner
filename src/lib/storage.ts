@@ -67,15 +67,24 @@ function pinKey(kind: PinKind, id: string) {
   return `${kind}:${id}`
 }
 
+/** Most items that can live on My Bench at once. */
+export const MAX_PINS = 6
+
 export function isPinned(pins: PinnedItem[], kind: PinKind, id: string): boolean {
   return pins.some((p) => pinKey(p.kind, p.id) === pinKey(kind, id))
 }
 
-/** Toggle a pin and persist. Returns the new pin list. */
+/**
+ * Toggle a pin and persist. Returns the new pin list.
+ * Adding is capped at MAX_PINS — once full, new pins are ignored (the list is
+ * returned unchanged). Unpinning always works.
+ */
 export function togglePin(item: PinnedItem): PinnedItem[] {
   const pins = loadPins()
   const key = pinKey(item.kind, item.id)
-  const next = pins.some((p) => pinKey(p.kind, p.id) === key)
+  const exists = pins.some((p) => pinKey(p.kind, p.id) === key)
+  if (!exists && pins.length >= MAX_PINS) return pins
+  const next = exists
     ? pins.filter((p) => pinKey(p.kind, p.id) !== key)
     : [...pins, item]
   write(KEYS.pins, next)

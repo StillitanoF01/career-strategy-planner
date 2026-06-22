@@ -68,13 +68,6 @@ function App() {
         </Routes>
       </main>
 
-      <footer className="app-footer">
-        <div className="container app-footer__inner">
-          <span>Workbench — take stock of your shop</span>
-          <span>$0 / use · no AI · free sources</span>
-        </div>
-      </footer>
-
       {showProfile && (
         <ProfileModal initial={profile} onClose={() => setShowProfile(false)} />
       )}
