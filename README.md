@@ -45,11 +45,24 @@ login required. You can still use `vercel dev` if you prefer.
 | Variable | Where to get it | Used by |
 |---|---|---|
 | `ADZUNA_APP_ID`, `ADZUNA_APP_KEY` | https://developer.adzuna.com/ | Jobs |
-| `TICKETMASTER_KEY` | https://developer.ticketmaster.com/ | Talks map |
 
-Geocoding (centring the map on your city) uses free OpenStreetMap Nominatim — no key.
+The **Talks map uses a static, curated events file** (`src/data/events.json`) — no key, no
+live API. (Eventbrite retired its public event-search API, so events are gathered offline and
+baked into the file.) `TICKETMASTER_KEY` is therefore optional; the legacy `/api/events`
+function is left in place but unused.
 
 **Secrets live only in `.env` / your host's env vars. They are never imported into `src/`.**
+
+## Refreshing the Talks events
+
+The Talks page reads `src/data/events.json` (shape: `EventItem[]` — name, organizer, start ISO,
+venue, **lat/lng**, category `walk|academic|cpd|tour`, free, optional badge, url). Events go
+stale, so refresh every few months:
+
+1. Gather upcoming architecture events (e.g. from Eventbrite) — title, date, venue, link, category.
+2. Geocode each venue to `lat`/`lng` (the map needs coordinates). The build script
+   `/_geo-events.mjs`-style approach uses free OpenStreetMap Nominatim; or geocode manually.
+3. Replace `src/data/events.json` and push — Vercel redeploys. No code change, no AI at runtime.
 
 ## Project markdown format (for Skill Gap)
 
@@ -87,9 +100,10 @@ overlap with your loaded projects.
 ## Deploy (Vercel)
 
 1. Push the repo and import it at vercel.com.
-2. Add `ADZUNA_APP_ID`, `ADZUNA_APP_KEY`, `TICKETMASTER_KEY` in Project → Settings → Environment
-   Variables.
-3. Deploy. The `/api` files become serverless functions automatically.
+2. Add `ADZUNA_APP_ID` and `ADZUNA_APP_KEY` in Project → Settings → Environment Variables
+   (the only keys needed — Talks runs off the static events file).
+3. Deploy. The `/api` files become serverless functions automatically. **Redeploy after adding
+   or changing env vars** — they only take effect on a new build.
 
 ## How to use
 

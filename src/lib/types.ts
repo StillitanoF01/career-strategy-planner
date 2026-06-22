@@ -58,6 +58,8 @@ export type GapResult = {
 
 // ---- Events / Talks ----
 
+export type EventCategory = 'walk' | 'academic' | 'cpd' | 'tour'
+
 export type EventItem = {
   id: string
   name: string
@@ -67,6 +69,11 @@ export type EventItem = {
   lng: number
   url: string
   source: 'ticketmaster' | 'eventbrite'
+  // Optional richer fields for the static (curated) events file:
+  organizer?: string
+  category?: EventCategory
+  free?: boolean
+  badge?: string // e.g. "Going fast", "Just added"
 }
 
 export type EventsResponse = {

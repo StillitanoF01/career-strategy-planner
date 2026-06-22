@@ -4,15 +4,32 @@ import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import { PageHead } from '../components/PageHead'
 import { Note } from '../components/Note'
-import { Button, LinkButton } from '../components/Button'
+import { LinkButton } from '../components/Button'
 import { PinButton } from '../components/PinButton'
-import { ApiError, fetchEvents, geocode } from '../lib/api'
-import { loadProfile } from '../lib/storage'
+import eventsData from '../data/events.json'
 import type { EventItem } from '../lib/types'
 import './talks.css'
 
-// Sydney — default centre when no profile city is set.
-const DEFAULT_CENTRE = { lat: -33.8688, lng: 151.2093, label: 'Sydney, Australia' }
+// Static, curated events (sourced from Eventbrite offline → no live API, no key,
+// no runtime AI). Refresh by regenerating src/data/events.json.
+const EVENTS = (eventsData as EventItem[])
+  .slice()
+  .sort((a, b) => a.start.localeCompare(b.start))
+
+const CATEGORIES: { key: string; label: string }[] = [
+  { key: 'all', label: 'All events' },
+  { key: 'walk', label: 'Walking tours' },
+  { key: 'academic', label: 'Academic / CDRF' },
+  { key: 'cpd', label: 'CPD / Workshop' },
+  { key: 'tour', label: 'Tours' },
+  { key: 'free', label: 'Free only' },
+]
+
+function matches(e: EventItem, cat: string): boolean {
+  if (cat === 'all') return true
+  if (cat === 'free') return e.free === true
+  return e.category === cat
+}
 
 const RUST_PIN = L.divIcon({
   className: 'rust-pin',
@@ -25,134 +42,81 @@ const RUST_PIN = L.divIcon({
   popupAnchor: [0, -28],
 })
 
-function Recenter({ lat, lng }: { lat: number; lng: number }) {
+function FitBounds({ events }: { events: EventItem[] }) {
   const map = useMap()
   useEffect(() => {
-    map.setView([lat, lng])
-  }, [lat, lng, map])
+    if (!events.length) return
+    const bounds = L.latLngBounds(events.map((e) => [e.lat, e.lng] as [number, number]))
+    map.fitBounds(bounds, { padding: [40, 40], maxZoom: 14 })
+  }, [events, map])
   return null
 }
 
 function FlyTo({ event }: { event: EventItem | null }) {
   const map = useMap()
   useEffect(() => {
-    if (event) map.flyTo([event.lat, event.lng], 14, { duration: 0.6 })
+    if (event) map.flyTo([event.lat, event.lng], 15, { duration: 0.6 })
   }, [event, map])
   return null
 }
 
 function formatWhen(iso: string): string {
-  if (!iso) return 'Date TBC'
   const d = new Date(iso)
   if (Number.isNaN(d.getTime())) return 'Date TBC'
-  return d.toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })
+  return d.toLocaleString('en-AU', {
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+    hour: 'numeric',
+    minute: '2-digit',
+  })
 }
 
 export function Talks() {
-  const [centre, setCentre] = useState(DEFAULT_CENTRE)
-  const [term, setTerm] = useState('architecture design urbanism')
-  const [appliedTerm, setAppliedTerm] = useState('architecture design urbanism')
-  const [radius, setRadius] = useState(50)
-  const [events, setEvents] = useState<EventItem[]>([])
-  const [status, setStatus] = useState<'loading' | 'ready' | 'empty' | 'error'>('loading')
-  const [error, setError] = useState('')
+  const [cat, setCat] = useState('all')
   const [selected, setSelected] = useState<EventItem | null>(null)
 
-  // Centre on the profile city if one is set.
-  useEffect(() => {
-    const city = loadProfile()?.city
-    if (!city) return
-    let live = true
-    geocode(city)
-      .then((g) => live && setCentre(g))
-      .catch(() => {
-        /* keep default centre */
-      })
-    return () => {
-      live = false
-    }
-  }, [])
-
-  // Fetch events on centre / radius / term change.
-  useEffect(() => {
-    let live = true
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setStatus('loading')
-    setError('')
-    fetchEvents({ lat: centre.lat, lng: centre.lng, radius, q: appliedTerm })
-      .then((res) => {
-        if (!live) return
-        setEvents(res.events)
-        setStatus(res.events.length ? 'ready' : 'empty')
-      })
-      .catch((err: unknown) => {
-        if (!live) return
-        setError(err instanceof ApiError ? err.message : 'Could not load events.')
-        setStatus('error')
-      })
-    return () => {
-      live = false
-    }
-  }, [centre, radius, appliedTerm])
-
-  const hasProfile = useMemo(() => Boolean(loadProfile()?.city), [])
+  const filtered = useMemo(() => EVENTS.filter((e) => matches(e, cat)), [cat])
+  const countFor = (key: string) => EVENTS.filter((e) => matches(e, key)).length
 
   return (
     <div className="container">
       <PageHead
         eyebrow="Local Talks Checker"
         title="Talks near your bench"
-        lead={`Architecture events around ${centre.label.split(',')[0]}, on a free OpenStreetMap.`}
+        lead="Architecture events around Sydney, on a free OpenStreetMap. Sourced from Eventbrite."
       />
 
-      <form
-        className="talks-controls"
-        onSubmit={(e) => {
-          e.preventDefault()
-          setAppliedTerm(term.trim() || 'architecture')
-        }}
-      >
-        <label className="field" style={{ flex: 1, minWidth: 220 }}>
-          <span className="field__label">Search</span>
-          <input className="input" value={term} onChange={(e) => setTerm(e.target.value)} />
-        </label>
-        <label className="field">
-          <span className="field__label">Radius</span>
-          <select
-            className="select"
-            value={radius}
-            onChange={(e) => setRadius(Number(e.target.value))}
-          >
-            <option value={10}>10 km</option>
-            <option value={25}>25 km</option>
-            <option value={50}>50 km</option>
-            <option value={100}>100 km</option>
-            <option value={250}>250 km</option>
-          </select>
-        </label>
-        <Button type="submit" arrow>
-          Search
-        </Button>
-      </form>
-
-      {!hasProfile && (
-        <div style={{ marginBottom: 'var(--space-4)' }}>
-          <Note title="Centred on Sydney">
-            Set your city in your profile to centre the map where you are.
-          </Note>
-        </div>
-      )}
+      <div className="cat-filters">
+        {CATEGORIES.map((c) => {
+          const n = countFor(c.key)
+          return (
+            <button
+              key={c.key}
+              type="button"
+              className={`cat-btn${cat === c.key ? ' is-active' : ''}`}
+              onClick={() => {
+                setCat(c.key)
+                setSelected(null)
+              }}
+            >
+              {c.label}
+              <span className="cat-btn__count">{n}</span>
+            </button>
+          )
+        })}
+      </div>
 
       <div className="talks-layout">
         <div className="talks-map">
-          <MapContainer center={[centre.lat, centre.lng]} zoom={11} scrollWheelZoom>
+          <MapContainer center={[-33.87, 151.21]} zoom={11} scrollWheelZoom>
             <TileLayer
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
-            <Recenter lat={centre.lat} lng={centre.lng} />
+            <FitBounds events={filtered} />
             <FlyTo event={selected} />
-            {events.map((ev) => (
+            {filtered.map((ev) => (
               <Marker
                 key={ev.id}
                 position={[ev.lat, ev.lng]}
@@ -176,24 +140,20 @@ export function Talks() {
         </div>
 
         <aside className="talks-list">
-          {status === 'loading' && <Note title="Locating talks…">Reading nearby events.</Note>}
-          {status === 'error' && (
-            <Note title="No answer from the events board" variant="error">
-              {error}
-            </Note>
-          )}
-          {status === 'empty' && (
-            <Note title="No talks found nearby">Widen the radius or change the search.</Note>
-          )}
-          {status === 'ready' &&
-            events.map((ev) => (
+          {filtered.length === 0 ? (
+            <Note title="No events in this filter">Pick another category.</Note>
+          ) : (
+            filtered.map((ev) => (
               <div
                 key={ev.id}
                 className={`talk-row${selected?.id === ev.id ? ' is-selected' : ''}`}
                 onClick={() => setSelected(ev)}
               >
                 <div className="talk-row__top">
-                  <div className="talk-row__name">{ev.name}</div>
+                  <div className="talk-row__name">
+                    {ev.name}
+                    {ev.badge && <span className="talk-row__badge">{ev.badge}</span>}
+                  </div>
                   <span onClick={(e) => e.stopPropagation()}>
                     <PinButton
                       item={{
@@ -210,8 +170,15 @@ export function Talks() {
                 <div className="talk-row__meta">
                   {formatWhen(ev.start)} · {ev.venue}
                 </div>
+                {ev.organizer && <div className="talk-row__meta">{ev.organizer}</div>}
+                {ev.category && (
+                  <span className="talk-row__cat">
+                    {CATEGORIES.find((c) => c.key === ev.category)?.label ?? ev.category}
+                  </span>
+                )}
               </div>
-            ))}
+            ))
+          )}
         </aside>
       </div>
     </div>

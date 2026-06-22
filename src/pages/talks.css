@@ -8,6 +8,65 @@
   margin-bottom: var(--space-4);
 }
 
+/* Category filter chips (sharp, ink active — Workshop Bench, not SaaS pills). */
+.cat-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+.cat-btn {
+  font-family: var(--font-display);
+  font-size: var(--fs-eyebrow);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: var(--track-eyebrow);
+  padding: 6px 12px;
+  border: var(--rule-thin) solid var(--ink);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--ink);
+  transition: background-color 120ms ease, color 120ms ease;
+}
+.cat-btn:hover {
+  background: var(--line);
+}
+.cat-btn.is-active {
+  background: var(--ink);
+  color: var(--bg-base);
+}
+.cat-btn__count {
+  opacity: 0.6;
+  margin-left: 4px;
+}
+
+.talk-row__badge {
+  display: inline-block;
+  background: var(--accent-rust);
+  color: var(--accent-rust-bg);
+  font-family: var(--font-display);
+  font-size: 9px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  margin-left: 6px;
+  vertical-align: middle;
+}
+.talk-row__cat {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink-muted);
+  border: var(--rule-thin) solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 1px 6px;
+  margin-top: 6px;
+}
+
 .talks-layout {
   display: grid;
   grid-template-columns: 1fr 320px;
