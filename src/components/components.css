@@ -192,6 +192,33 @@
   border-color: var(--accent-rust);
 }
 
+.pin-max-toast {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  background: var(--bg-card);
+  color: var(--accent-rust);
+  border: 1px solid var(--accent-rust);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-display);
+  font-size: calc(var(--fs-eyebrow) * 0.8);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 3px 8px;
+  pointer-events: none;
+  z-index: 999;
+  animation: pin-toast-fade 2.5s ease forwards;
+}
+
+@keyframes pin-toast-fade {
+  0%   { opacity: 1; }
+  70%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
 /* ---------- Drawer / record card ---------- */
 .drawer-card {
   background: var(--bg-card);

@@ -30,8 +30,13 @@ export function usePins(): PinnedItem[] {
   return useSyncExternalStore(pinsStore.subscribe, pinsStore.get, () => [])
 }
 
-export function togglePin(item: PinnedItem): void {
-  pinsStore.set(persistToggle(item))
+/** Returns true if the pin was added/removed, false if blocked (max reached). */
+export function togglePin(item: PinnedItem): boolean {
+  const before = pinsStore.get()
+  const after = persistToggle(item)
+  pinsStore.set(after)
+  const wasAdding = !before.some((p) => p.kind === item.kind && p.id === item.id)
+  return !(wasAdding && after.length === before.length)
 }
 
 export function pinned(item: { kind: PinnedItem['kind']; id: string }): boolean {
