@@ -142,9 +142,13 @@
   font-weight: 500;
   grid-row: 1;
 }
-.top-companies__row--hiring {
-  background: rgba(163, 83, 46, 0.08);
-  border-left: 3px solid var(--accent);
+.drawer-card--hiring {
+  background: rgba(180, 80, 47, 0.06) !important;
+  border-left: 3px solid #b4502f !important;
+}
+.top-companies .top-companies__row--hiring {
+  background: rgba(180, 80, 47, 0.1) !important;
+  border-left: 3px solid #b4502f;
   padding-left: calc(var(--space-4) - 3px);
 }
 .firm-hiring-badge {

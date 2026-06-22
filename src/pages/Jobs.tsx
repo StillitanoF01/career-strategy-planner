@@ -76,14 +76,17 @@ export function Jobs() {
 
   const totalPages = Math.max(1, Math.ceil(count / PER_PAGE))
 
-  // Build a set of lowercase company names from loaded jobs for hiring detection.
-  const hiringNames = new Set(jobs.map((j) => j.company.toLowerCase()))
+  // Check if an ARCH_FIRM appears in the loaded job listings.
+  const jobCompanies = jobs.map((j) => j.company.toLowerCase())
   function isHiring(firmName: string) {
     const needle = firmName.toLowerCase()
-    for (const name of hiringNames) {
-      if (name.includes(needle) || needle.includes(name)) return true
-    }
-    return false
+    return jobCompanies.some((c) => c.includes(needle) || needle.includes(c))
+  }
+
+  // Check if a job card's company matches one of the curated ARCH_FIRMS.
+  function isArchFirmJob(company: string) {
+    const c = company.toLowerCase()
+    return ARCH_FIRMS.some((f) => c.includes(f.name.toLowerCase()) || f.name.toLowerCase().includes(c))
   }
 
   function onSearch(e: React.FormEvent) {
@@ -161,7 +164,7 @@ export function Jobs() {
             <>
               <div className="jobs-grid">
                 {jobs.map((job) => (
-                  <JobCard key={job.id} job={job} country="au" />
+                  <JobCard key={job.id} job={job} country="au" highlighted={isArchFirmJob(job.company)} />
                 ))}
               </div>
               <div className="pager">
@@ -193,7 +196,7 @@ export function Jobs() {
               <span className="top-companies__title">Top Architecture Firms</span>
             </div>
             {ARCH_FIRMS.map((f, i) => (
-              <div className="top-companies__row" key={f.name}>
+              <div className={`top-companies__row${isHiring(f.name) ? ' top-companies__row--hiring' : ''}`} key={f.name}>
                 <span className="top-companies__rank">{i + 1}</span>
                 <span className="top-companies__name">
                   {f.name}
@@ -211,10 +214,10 @@ export function Jobs() {
   )
 }
 
-function JobCard({ job, country }: { job: Job; country: string }) {
+function JobCard({ job, country, highlighted }: { job: Job; country: string; highlighted?: boolean }) {
   const salary = formatSalaryRange(job.salaryMin, job.salaryMax, country)
   return (
-    <DrawerCard label={job.company} title={job.title}>
+    <DrawerCard label={job.company} title={job.title} className={highlighted ? 'drawer-card--hiring' : ''}>
       <div className="job-card__meta">
         <div className="job-card__row">
           <span>{job.location}</span>
