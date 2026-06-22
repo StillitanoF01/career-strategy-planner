@@ -18,7 +18,7 @@ export function ProfileModal({
   const [country, setCountry] = useState(initial?.country ?? 'au')
   const [studyLevel, setStudyLevel] = useState(initial?.studyLevel ?? '')
   const [interests, setInterests] = useState((initial?.interests ?? []).join(', '))
-  const [units, setUnits] = useState<Profile['units']>(initial?.units ?? 'metric')
+  const units: Profile['units'] = initial?.units ?? 'metric'
 
   function save(e: React.FormEvent) {
     e.preventDefault()
