@@ -6,7 +6,7 @@ import type { GapResult, Job, Project, SkillDemand, SkillEntry } from './types'
 export const taxonomy = taxonomyRaw as SkillEntry[]
 
 // Pre-compile one word-boundary regex per alias, once.
-type CompiledSkill = { skill: string; matchers: RegExp[] }
+type CompiledSkill = { skill: string; matchers: RegExp[]; category: 'skill' | 'typology' }
 
 function escapeRegExp(s: string): string {
   return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
@@ -14,8 +14,11 @@ function escapeRegExp(s: string): string {
 
 const COMPILED: CompiledSkill[] = taxonomy.map((entry) => ({
   skill: entry.skill,
+  category: entry.category,
   matchers: entry.aliases.map((a) => new RegExp(`\\b${escapeRegExp(a)}\\b`, 'i')),
 }))
+
+const CATEGORY_MAP = new Map(taxonomy.map((e) => [e.skill, e.category]))
 
 /** Set of taxonomy skills mentioned anywhere in `text`. */
 export function skillsInText(text: string): Set<string> {
@@ -66,7 +69,8 @@ export function computeGaps(jobs: Job[], projects: Project[]): GapResult {
   const strengths: SkillDemand[] = []
 
   for (const [skill, count] of demand) {
-    const row: SkillDemand = { skill, demand: count, total }
+    const category = CATEGORY_MAP.get(skill) ?? 'skill'
+    const row: SkillDemand = { skill, demand: count, total, category }
     if (have.has(skill)) strengths.push(row)
     else gaps.push(row)
   }

@@ -34,25 +34,35 @@ export type TopCompaniesResponse = {
 export type Project = {
   fileName: string
   title: string
-  declaredSkills: string[] // from explicit Skills/Tools/Software lines + ## Skills
-  bodyText: string // full body, lower-cased, for keyword scan
+  year: string
+  semester: string
+  unit: string
+  tutor: string
+  typology: string
+  grade: string
+  brief: string
+  topSkills: string[]
+  declaredSkills: string[]
+  bodyText: string
 }
 
 export type SkillEntry = {
   skill: string
   aliases: string[]
+  category: 'skill' | 'typology'
 }
 
 /** A skill the jobs demand, with how many of the fetched jobs ask for it. */
 export type SkillDemand = {
   skill: string
-  demand: number // count of jobs mentioning it
-  total: number // total jobs scanned
+  demand: number
+  total: number
+  category: 'skill' | 'typology'
 }
 
 export type GapResult = {
-  gaps: SkillDemand[] // demanded, user lacks — ranked by demand
-  strengths: SkillDemand[] // demanded, user already has
+  gaps: SkillDemand[]
+  strengths: SkillDemand[]
   totalJobs: number
 }
 
