@@ -49,8 +49,7 @@ export function ProfileModal({
           <span className="modal__title">Set up your bench</span>
         </div>
         <p style={{ marginBottom: 'var(--space-4)' }}>
-          A few details so the bench knows where you work and what you're after. Stored on this
-          machine only — no account.
+          A few details so the bench knows where you work and what you're after. Head to the skill gap page to get started with your project matches.
         </p>
         <form className="modal__form" onSubmit={save}>
           <label className="field">
