@@ -15,6 +15,10 @@ import './theme/base.css'
 
 import App from './App'
 
+// Clear all persisted state on every page load so the welcome screen
+// always appears fresh and no project/pin data carries over between visits.
+;['wb.projects', 'wb.profile', 'wb.pins'].forEach((k) => localStorage.removeItem(k))
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
