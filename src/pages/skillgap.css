@@ -344,13 +344,101 @@
 }
 
 /* ---- Upload panel ---- */
+.skills-stage__md-help {
+  position: relative;
+}
+
+.skills-stage__md-help-btn {
+  width: 1.1cqw;
+  height: 1.1cqw;
+  border-radius: 2px;
+  border: 1.5px solid rgba(44, 42, 36, 0.45);
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 0.5cqw;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.6;
+  transition: opacity 0.15s, background 0.15s;
+}
+
+.skills-stage__md-help-btn:hover,
+.skills-stage__md-help-btn.is-active {
+  opacity: 1;
+  background: rgba(44, 42, 36, 0.08);
+}
+
+.skills-stage__md-help-popup {
+  position: absolute;
+  top: calc(100% + 0.5cqw);
+  right: 0;
+  width: 18cqw;
+  background: var(--paper, #f0ead8);
+  border: 1.5px solid rgba(44, 42, 36, 0.25);
+  border-radius: var(--radius-sm);
+  padding: 0.8cqw;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5cqw;
+}
+
+.skills-stage__md-help-popup .skills-stage__md-help-title {
+  font-family: var(--font-display);
+  font-size: 0.626cqw;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink);
+  opacity: 1;
+  margin: 0;
+}
+
+.skills-stage__md-help-popup p {
+  font-family: var(--font-body, var(--font-display));
+  font-size: 0.48cqw;
+  color: var(--ink);
+  opacity: 0.8;
+  margin: 0;
+  line-height: 1.55;
+}
+
+.skills-stage__md-help-link {
+  font-family: var(--font-display);
+  font-size: 0.626cqw;
+  font-weight: 700;
+  color: #b5512e;
+  text-decoration: none;
+  margin-top: 0.2cqw;
+  display: inline-block;
+  border: 1.5px solid #b5512e;
+  border-radius: 2px;
+  padding: 0.2cqw 0.5cqw;
+  text-align: center;
+  transition: background 0.15s;
+}
+
+.skills-stage__md-help-link:hover {
+  background: rgba(181, 81, 46, 0.08);
+}
+
 .skills-stage__upload {
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
   border: 1px solid rgba(44, 42, 36, 0.22);
   border-radius: var(--radius-sm);
-  overflow: hidden;
+  overflow: visible;
+}
+
+.skills-stage__upload .skills-stage__panel-head {
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
 }
 
 .skills-stage__dropzone {

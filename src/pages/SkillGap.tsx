@@ -24,7 +24,20 @@ export function SkillGap() {
   const [dragOver, setDragOver] = useState(false)
   const [expanded, setExpanded] = useState<Set<string>>(new Set())
   const [expandedSkill, setExpandedSkill] = useState<string | null>(null)
+  const [mdHelpOpen, setMdHelpOpen] = useState(false)
+  const mdHelpRef = useRef<HTMLDivElement>(null)
   const fileInput = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    if (!mdHelpOpen) return
+    function handleClick(e: MouseEvent) {
+      if (mdHelpRef.current && !mdHelpRef.current.contains(e.target as Node)) {
+        setMdHelpOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClick)
+    return () => document.removeEventListener('mousedown', handleClick)
+  }, [mdHelpOpen])
 
   useEffect(() => {
     let live = true
@@ -171,6 +184,24 @@ export function SkillGap() {
           <div className="skills-stage__upload">
             <div className="skills-stage__panel-head">
               Projects{projects.length > 0 ? ` (${projects.length})` : ''}
+              <div className="skills-stage__md-help" ref={mdHelpRef}>
+                <button
+                  type="button"
+                  className={`skills-stage__md-help-btn${mdHelpOpen ? ' is-active' : ''}`}
+                  aria-label="What is a project .md file?"
+                  onClick={() => setMdHelpOpen((o) => !o)}
+                >?</button>
+                {mdHelpOpen && (
+                  <div className="skills-stage__md-help-popup" role="tooltip">
+                    <p className="skills-stage__md-help-title">What is a project .md file?</p>
+                    <p>Each file is a Markdown document describing one of your finished projects, its typology, skills used, grade, and a written brief. The Skill Gap Checker reads these files to measure your portfolio against live job listings.</p>
+                    <p>Files are generated using a custom Claude skill. This web app is an extension of that skill. Install it in Claude to produce your own .md files, then upload them here.</p>
+                    <a className="skills-stage__md-help-link" href="#" onClick={(e) => e.preventDefault()}>
+                      Download the Claude skill
+                    </a>
+                  </div>
+                )}
+              </div>
             </div>
             <div
               className={`skills-stage__dropzone${dragOver ? ' is-over' : ''}`}
@@ -214,7 +245,7 @@ export function SkillGap() {
                   {projects.length} project{projects.length !== 1 ? 's' : ''} loaded
                 </div>
                 <div className="skills-stage__card-list">
-                  {projects.map((p) => (
+                  {[...projects].sort((a, b) => (b.year ?? '').localeCompare(a.year ?? '')).map((p) => (
                     <ProjectCard
                       key={p.fileName}
                       project={p}
