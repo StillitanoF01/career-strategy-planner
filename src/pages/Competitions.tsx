@@ -173,19 +173,21 @@ export function Competitions() {
               </div>
             )}
           </div>
-          {cardsOverflow && (
-            <button
-              className="comps-stage__scroll-hint"
-              aria-label="Scroll cards down"
-              onClick={() => cardsScrollRef.current?.scrollTo({ top: cardsScrollRef.current.scrollHeight, behavior: 'smooth' })}
-            >
-              <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="0.75" y="0.75" width="12.5" height="12.5" rx="2.25" stroke="currentColor" strokeWidth="1"/>
-                <polyline points="4,5.5 7,8.5 10,5.5" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </button>
-          )}
         </div>
+
+        {/* Scroll hint — only shown when cards overflow the visible area */}
+        {cardsOverflow && (
+          <button
+            className="comps-stage__scroll-hint"
+            aria-label="Scroll cards down"
+            onClick={() => cardsScrollRef.current?.scrollTo({ top: cardsScrollRef.current.scrollHeight, behavior: 'smooth' })}
+          >
+            <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="0.75" y="0.75" width="12.5" height="12.5" rx="2.25" stroke="currentColor" strokeWidth="1"/>
+              <polyline points="4,5.5 7,8.5 10,5.5" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
+        )}
 
         {/* Right page — stats + tag filters */}
         <div className="comps-stage__layer comps-stage__sidebar">
