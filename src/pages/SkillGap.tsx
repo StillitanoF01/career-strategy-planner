@@ -208,23 +208,32 @@ export function SkillGap() {
 
           {/* Project cards */}
           {projects.length > 0 && (
-            <div className="skills-stage__cards">
-              <div className="skills-stage__panel-head">
-                {projects.length} project{projects.length !== 1 ? 's' : ''} loaded
+            <>
+              <div className="skills-stage__cards">
+                <div className="skills-stage__panel-head">
+                  {projects.length} project{projects.length !== 1 ? 's' : ''} loaded
+                </div>
+                <div className="skills-stage__card-list">
+                  {projects.map((p) => (
+                    <ProjectCard
+                      key={p.fileName}
+                      project={p}
+                      isExpanded={expanded.has(p.fileName)}
+                      demandedSkillCount={projectDemandCount.get(p.fileName) ?? 0}
+                      onToggle={() => toggleCard(p.fileName)}
+                      onRemove={() => removeProject(p.fileName)}
+                    />
+                  ))}
+                </div>
               </div>
-              <div className="skills-stage__card-list">
-                {projects.map((p) => (
-                  <ProjectCard
-                    key={p.fileName}
-                    project={p}
-                    isExpanded={expanded.has(p.fileName)}
-                    demandedSkillCount={projectDemandCount.get(p.fileName) ?? 0}
-                    onToggle={() => toggleCard(p.fileName)}
-                    onRemove={() => removeProject(p.fileName)}
-                  />
-                ))}
-              </div>
-            </div>
+              <p className="skills-stage__badge-hint">
+                <span className="skills-stage__card-badge skills-stage__card-badge--centered">Core Project</span>
+                <span>
+                  A PROJECT EARNS THIS BADGE WHEN IT COVERS 3 OR MORE SKILLS<br />
+                  DEMANDED BY LIVE JOB LISTINGS AND HAS A GRADE OF 60 OR ABOVE.
+                </span>
+              </p>
+            </>
           )}
         </div>
       </div>
@@ -460,7 +469,8 @@ function ProjectCard({
   const meta = [project.unit, project.typology].filter(Boolean).join(' · ')
   const gradeStr = project.grade ? `Grade ${project.grade}` : ''
   const fullMeta = [project.year, meta, gradeStr].filter(Boolean).join(' · ')
-  const isStrong = demandedSkillCount >= 2
+  const grade = project.grade ? parseFloat(String(project.grade)) : null
+  const isStrong = demandedSkillCount >= 3 && (grade === null || grade >= 60)
 
   return (
     <div className={`skills-stage__card${isStrong ? ' is-strong' : ''}`}>
