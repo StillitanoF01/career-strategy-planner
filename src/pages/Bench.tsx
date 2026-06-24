@@ -27,8 +27,8 @@ type Tool = {
 }
 
 const TOOLS: Tool[] = [
-  { to: '/jobs', title: 'Job Searcher', desc: 'Find live jobs that match your projects and skills', Icon: IconBriefcase, accent: true },
   { to: '/skill-gap', title: 'Skill Gap Checker', desc: 'Compare your skills to what live jobs want', Icon: IconTool },
+  { to: '/jobs', title: 'Job Searcher', desc: 'Find live jobs that match your projects and skills', Icon: IconBriefcase, accent: true },
   { to: '/talks', title: 'Local Talks Checker', desc: 'See upcoming talks, events and workshops', Icon: IconMapPin },
   { to: '/competitions', title: 'Competition Checker', desc: 'Browse competitions to challenge your work', Icon: IconTrophy, accent: true },
   { to: '/scholarships', title: 'Scholarship Checker', desc: 'Find scholarships that match your goals', Icon: IconCertificate },

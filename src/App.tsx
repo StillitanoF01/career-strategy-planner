@@ -13,8 +13,8 @@ import './App.css'
 
 const NAV = [
   { to: '/', label: 'Bench', end: true },
-  { to: '/jobs', label: 'Jobs' },
   { to: '/skill-gap', label: 'Skill Gap' },
+  { to: '/jobs', label: 'Jobs' },
   { to: '/talks', label: 'Talks' },
   { to: '/competitions', label: 'Competitions' },
   { to: '/scholarships', label: 'Scholarships' },
