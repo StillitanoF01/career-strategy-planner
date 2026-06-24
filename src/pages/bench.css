@@ -17,7 +17,7 @@
   max-width: 1536px;
   margin: 0 auto;
   aspect-ratio: 1536 / 1024;
-  background: url('/bench-bg.jpg') center / cover no-repeat;
+  background: url('/holebench-bg.jpg') center / cover no-repeat;
   container-type: inline-size; /* enables cqw units for children */
   overflow: hidden;
 }
@@ -33,8 +33,8 @@
 
 /* Name plate (rendered, since the photo has none). */
 .stage__plate {
-  top: 4.2%;
-  left: 50%;
+  top: 3.9%;
+  left: 49.8%;
   transform: translateX(calc(-50% - 0.3cqw));
   padding: 0.55cqw 1.6cqw;
   font-family: var(--font-display);
@@ -51,22 +51,23 @@
 }
 
 .stage__head {
-  top: 15%;
+  top: 13.5%;
   left: 13%;
   width: 74%;
 }
 .stage__title {
-  font-size: 2.9cqw;
+  font-size: 3.0015cqw;
   line-height: 1.0;
   text-transform: uppercase;
   letter-spacing: 0.01em;
   margin: 0 0 0.7cqw;
 }
 .stage__lead {
-  font-size: 1.15cqw;
+  font-size: 1.19025cqw;
   line-height: 1.35;
   color: var(--ink-muted);
-  max-width: 40cqw;
+  max-width: 60cqw;
+  white-space: nowrap;
   margin: 0;
 }
 
@@ -330,7 +331,7 @@
 }
 
 .bench__title {
-  font-size: clamp(30px, 5.2vw, 56px);
+  font-size: clamp(41.4px, 7.176vw, 77.28px);
   line-height: 1.02;
   text-transform: uppercase;
   letter-spacing: 0.01em;

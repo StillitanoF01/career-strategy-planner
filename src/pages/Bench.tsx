@@ -93,7 +93,7 @@ export function Bench() {
         <div className="stage__layer stage__head">
           <h1 className="stage__title">Every tool, hung where you can find it</h1>
           <p className="stage__lead">
-            Label what you've built, see what the shop wants, and pick your next move.
+            See what you've built, find what's missing, and sharpen your edge.
           </p>
         </div>
 
@@ -136,7 +136,7 @@ export function Bench() {
 
           <h1 className="bench__title">Every tool, hung where you can find it</h1>
           <p className="bench__lead">
-            Label what you've built, see what the shop wants, and pick your next move.
+            See what you've built, find what's missing, and sharpen your edge.
           </p>
           <p className="bench__stats">{stats}</p>
 
