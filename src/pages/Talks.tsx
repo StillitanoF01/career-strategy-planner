@@ -115,6 +115,7 @@ function TalksMap({ events, selected, onSelect }: TalksMapProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<maplibregl.Map | null>(null)
   const markersRef = useRef<maplibregl.Marker[]>([])
+  const markerMapRef = useRef<Map<string, maplibregl.Marker>>(new Map())
   const [mapReady, setMapReady] = useState(false)
 
   // Stable callback ref so marker listeners don't go stale
@@ -134,6 +135,13 @@ function TalksMap({ events, selected, onSelect }: TalksMapProps) {
     map.addControl(new maplibregl.AttributionControl({ compact: true }), 'bottom-right')
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right')
     mapRef.current = map
+
+    // MapLibre calls canvas.focus() at the end of flyTo, which scrolls the page.
+    // Override it to always use preventScroll so the viewport stays put.
+    const canvas = map.getCanvas()
+    const origFocus = canvas.focus.bind(canvas)
+    canvas.focus = (opts?: FocusOptions) => origFocus({ ...opts, preventScroll: true })
+
     map.on('load', () => {
       applyPalette(map)
       setMapReady(true)
@@ -153,6 +161,7 @@ function TalksMap({ events, selected, onSelect }: TalksMapProps) {
 
     markersRef.current.forEach((m) => m.remove())
     markersRef.current = []
+    markerMapRef.current.clear()
     if (!events.length) return
 
     const bounds = new maplibregl.LngLatBounds()
@@ -164,7 +173,7 @@ function TalksMap({ events, selected, onSelect }: TalksMapProps) {
       el.innerHTML = PIN_SVG
       el.style.cssText = 'width:22px;height:30px;cursor:pointer'
 
-      const popup = new maplibregl.Popup({ offset: [0, -28], closeButton: false })
+      const popup = new maplibregl.Popup({ offset: [0, -28], closeButton: false, focusAfterOpen: false })
         .setHTML(
           `<div class="talk-popup__name">${ev.name}</div>` +
           `<div class="talk-popup__meta">${formatWhen(ev.start)} · ${ev.venue}</div>` +
@@ -176,17 +185,37 @@ function TalksMap({ events, selected, onSelect }: TalksMapProps) {
         .setPopup(popup)
         .addTo(map)
 
-      el.addEventListener('click', () => onSelectRef.current(ev))
+      el.addEventListener('click', (e) => { e.stopPropagation(); onSelectRef.current(ev) })
       markersRef.current.push(marker)
+      markerMapRef.current.set(ev.id, marker)
     })
   }, [events, mapReady])
 
-  // Fly to selected
+  // Close all open popups
+  const closeAllPopups = useCallback(() => {
+    markerMapRef.current.forEach((m) => {
+      if (m.getPopup().isOpen()) m.togglePopup()
+    })
+  }, [])
+
+  // Close popups on bare map click
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map || !mapReady) return
+    map.on('click', closeAllPopups)
+    return () => { map.off('click', closeAllPopups) }
+  }, [mapReady, closeAllPopups])
+
+  // Fly to selected and open its popup
   useEffect(() => {
     const map = mapRef.current
     if (!map || !mapReady || !selected) return
-    map.flyTo({ center: [selected.lng, selected.lat], zoom: 15, duration: 600 })
-  }, [selected, mapReady])
+    const zoom = Math.max(map.getZoom(), 14)
+    map.flyTo({ center: [selected.lng, selected.lat], zoom, duration: 600 })
+    closeAllPopups()
+    const marker = markerMapRef.current.get(selected.id)
+    if (marker) marker.togglePopup()
+  }, [selected, mapReady, closeAllPopups])
 
   return <div ref={containerRef} className="talks-map-gl" />
 }
@@ -205,6 +234,12 @@ export function Talks() {
   useEffect(() => { setEventsPage(1) }, [cat])
 
   const handleSelect = useCallback((ev: EventItem) => setSelected(ev), [])
+
+  useEffect(() => {
+    const deselect = () => setSelected(null)
+    document.addEventListener('click', deselect)
+    return () => document.removeEventListener('click', deselect)
+  }, [])
 
   return (
     <div className="talks-wrap">
@@ -266,7 +301,7 @@ export function Talks() {
                   <div
                     key={ev.id}
                     className={`talks-stage__card${selected?.id === ev.id ? ' is-selected' : ''}`}
-                    onClick={() => setSelected(ev)}
+                    onClick={(e) => { e.stopPropagation(); setSelected(ev) }}
                   >
                     {ev.badge && <span className="talks-stage__card-badge">{ev.badge}</span>}
                     <div className="talks-stage__card-label">
@@ -330,7 +365,7 @@ export function Talks() {
                 <div
                   key={ev.id}
                   className={`talk-row${selected?.id === ev.id ? ' is-selected' : ''}`}
-                  onClick={() => setSelected(ev)}
+                  onClick={(e) => { e.stopPropagation(); setSelected(ev) }}
                 >
                   <div className="talk-row__top">
                     <div className="talk-row__name">
