@@ -496,7 +496,7 @@ function ProjectCard({
   onToggle: () => void
   onRemove: () => void
 }) {
-  const displayTitle = stripYearSuffix(project.title) + (project.year ? ` (${project.year})` : '')
+  const displayTitle = stripYearSuffix(project.title)
   const meta = [project.unit, project.typology].filter(Boolean).join(' · ')
   const gradeStr = project.grade ? `Grade ${project.grade}` : ''
   const fullMeta = [project.year, meta, gradeStr].filter(Boolean).join(' · ')
@@ -519,9 +519,18 @@ function ProjectCard({
           <IconX size={10} stroke={2.5} />
         </button>
       </div>
-      {fullMeta && (
-        <div className="skills-stage__card-meta">{fullMeta}</div>
-      )}
+      <div className="skills-stage__card-footer">
+        {fullMeta && (
+          <div className="skills-stage__card-meta">{fullMeta}</div>
+        )}
+        <button
+          type="button"
+          className="skills-stage__card-toggle"
+          onClick={onToggle}
+        >
+          {isExpanded ? 'see less' : 'see more'}
+        </button>
+      </div>
       {isExpanded && (
         <div className="skills-stage__card-detail">
           {project.semester && (
@@ -547,13 +556,6 @@ function ProjectCard({
           )}
         </div>
       )}
-      <button
-        type="button"
-        className="skills-stage__card-toggle"
-        onClick={onToggle}
-      >
-        {isExpanded ? 'see less' : 'see more'}
-      </button>
     </div>
   )
 }
