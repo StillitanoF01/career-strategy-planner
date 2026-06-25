@@ -76,6 +76,26 @@ export function SkillGap() {
     try { mergeProjects(await pickDirectoryProjects()) } catch { /* cancelled */ }
   }
 
+  async function onPrePopulate() {
+    const files = [
+      'Garden-Commons-2026.md',
+      'Library-2024.md',
+      'Pebbles-to-Pathways-2025.md',
+      'Points-Lines-Planes-2023.md',
+      'The-Driftline-Residence-2024.md',
+      'The-Undone-House-2023.md',
+      'The-Watershed-2025.md',
+    ]
+    const fetched = await Promise.all(
+      files.map(async (name) => {
+        const res = await fetch(`/sample-projects/${name}`)
+        const text = await res.text()
+        return new File([text], name, { type: 'text/markdown' })
+      }),
+    )
+    mergeProjects(await readFilesToProjects(fetched))
+  }
+
   function removeProject(fileName: string) {
     setProjects((prev) => {
       const next = prev.filter((p) => p.fileName !== fileName)
@@ -225,6 +245,13 @@ export function SkillGap() {
                 >
                   Choose files
                 </button>
+                <button
+                  type="button"
+                  className="skills-stage__drop-btn skills-stage__drop-btn--prepopulate"
+                  onClick={onPrePopulate}
+                >
+                  Pre-populate
+                </button>
               </div>
               <input
                 ref={fileInput}
@@ -289,6 +316,9 @@ export function SkillGap() {
             )}
             <Button variant="secondary" onClick={() => fileInput.current?.click()}>
               Choose files
+            </Button>
+            <Button variant="primary" onClick={onPrePopulate}>
+              Pre-populate
             </Button>
           </div>
           <input

@@ -466,7 +466,7 @@
 .skills-stage__drop-actions {
   display: flex;
   gap: 0.35cqw;
-  flex-wrap: wrap;
+  flex: 1;
 }
 
 .skills-stage__drop-btn {
@@ -481,12 +481,23 @@
   border-radius: var(--radius-sm);
   padding: 0.22cqw 0.55cqw;
   cursor: pointer;
-  transition: background 120ms ease;
+  transition: background 120ms ease, border-color 120ms ease;
   white-space: nowrap;
+  flex: 1;
 }
 
 .skills-stage__drop-btn:hover {
   background: rgba(44, 42, 36, 0.08);
+}
+
+.skills-stage__drop-btn--prepopulate {
+  background: rgba(181, 81, 46, 0.22);
+  border: 1.5px solid #b5512e;
+  color: #b5512e;
+}
+
+.skills-stage__drop-btn--prepopulate:hover {
+  background: rgba(181, 81, 46, 0.18);
 }
 
 /* ---- Project cards panel ---- */
