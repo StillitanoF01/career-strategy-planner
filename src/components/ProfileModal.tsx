@@ -49,11 +49,15 @@ export function ProfileModal({
           <span className="modal__title">Set up your bench</span>
         </div>
         <p style={{ marginBottom: 'var(--space-4)' }}>
-          A few details so the bench knows where you work and what you're after. Head to the skill gap page to get started with your project matches.
+          A few details so the bench knows what you're after.{' '}
+          <br />
+          Head on over to the 'SKILL GAP' page to get started{' '}
+          <br />
+          with your project matches.
         </p>
         <form className="modal__form" onSubmit={save}>
           <label className="field">
-            <span className="field__label">Name (optional)</span>
+            <span className="field__label">Name</span>
             <input className="input" value={name} onChange={(e) => setName(e.target.value)} />
           </label>
           <label className="field">
