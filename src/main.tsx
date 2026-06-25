@@ -19,6 +19,11 @@ import App from './App'
 // always appears fresh and no project/pin data carries over between visits.
 ;['wb.projects', 'wb.profile', 'wb.pins'].forEach((k) => localStorage.removeItem(k))
 
+// Always start at the landing page regardless of the URL the user refreshed on.
+if (window.location.pathname !== '/') {
+  window.history.replaceState(null, '', '/')
+}
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
