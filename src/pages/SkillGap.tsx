@@ -216,7 +216,11 @@ export function SkillGap() {
                     <p className="skills-stage__md-help-title">What is a project .md file?</p>
                     <p>Each file is a Markdown document describing one of your finished projects, its typology, skills used, grade, and a written brief. The Skill Gap Checker reads these files to measure your portfolio against live job listings.</p>
                     <p>Files are generated using a custom Claude skill. This web app is an extension of that skill. Install it in Claude to produce your own .md files, then upload them here.</p>
-                    <a className="skills-stage__md-help-link" href="#" onClick={(e) => e.preventDefault()}>
+                    <a
+                      className="skills-stage__md-help-link"
+                      href="/ballot-debriefer-portable.skill"
+                      download="ballot-debriefer-portable.skill"
+                    >
                       Download the Claude skill
                     </a>
                   </div>
